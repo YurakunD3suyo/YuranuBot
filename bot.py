@@ -118,7 +118,11 @@ async def vc_command(interact: discord.Interaction):
             length_limit = f"!!文字数制限なし!!"
         else:
             length_limit = f"{length_limit}文字"
-    
+        if channel == None:
+            channel = interact.channel
+            set_db_setting(db_data[0], db_data[1], interact.guild_id, "speak_channel", channel.id) ##チャンネルが設定されていない場合は新しく設定する
+        else:
+            channel = channel
 
         embed = discord.Embed(
             title="接続したのだ！",
@@ -230,6 +234,22 @@ async def change_vc_join_message(interact: discord.Interaction, text: str):
         filename = exception_traceback.tb_frame.f_code.co_filename
         line_no = exception_traceback.tb_lineno
         await sendException(e, filename, line_no)
+
+@tree.command(name="yomiage-file-limit", description="読み上げるファイルの数を変更するのだ(無効化はできないのだ)")
+async def change_vc_join_message(interact: discord.Interaction, lenght: int):
+    try:
+        res = set_db_setting(db_data[0], db_data[1], interact.guild_id, "file_limit", lenght)
+        if res is None:
+            await interact.response.send_message(f"**ファイルの読み上げる数を{lenght}に変更したのだ！**")
+            return
+        
+        await interact.response.send_message("設定に失敗したのだ...")
+
+    except Exception as e:
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        line_no = exception_traceback.tb_lineno
+        await sendException(e, filename, line_no)
         
 @tree.command(name="yomiage-exit-message", description="退出時の読み上げ内容を変更するのだ<<必ず最初にユーザー名が来るのだ>>")
 async def change_vc_exit_message(interact: discord.Interaction, text: str):
@@ -297,15 +317,28 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
     
     # #####!!!!!!自動接続関連!!!!!!!!!!########
     # ##接続時に自動接続する
-    # if after.channel != None:
-    #     auto_channel = get_db_setting(db_data[0], member.voice.channel.guild.id, "auto_connect")
-    #     print(auto_channel)
-    #     if ((auto_channel == after.channel.id) and (after.channel is not None) and (member.guild.s):
-    #         await after.channel.connect()
-    # else:
-    #     ##全員退席後に退席する
-
-    #     await before.channel.guild.voice_client.disconnect()
+    if after.channel != None:
+        auto_channel = get_db_setting(db_data[0], member.voice.channel.guild.id, "auto_connect")
+        print(auto_channel)
+        if auto_channel == after.channel.id:
+            await after.channel.connect()
+            mess = get_db_setting(db_data[0], interact.guild_id, "vc_connect_message")
+            if mess is not None:
+                await yomiage_filter(mess, interact.guild, 1)
+            return # 接続したのだだけを読ませるために終わらせる
+    if member.guild.voice_client:
+        if before.channel != None:
+            members = before.channel.members
+            count = 0
+            for m in before.channel.members:
+                if m.bot:
+                    members.pop(count)
+                    count -= 1
+                count += 1
+                
+            if len(members) == 0:
+                await member.guild.voice_client.disconnect()
+                return
 
     if before.channel != after.channel:
         for bot_client in client.voice_clients:
@@ -362,41 +395,6 @@ async def on_message(message: discord.Message):
 
 yomiage_serv_list = defaultdict(deque)
 
-def search_content(content: discord.message.Message):
-    length = len(content.attachments)
-    
-    if length >= 3: ##ファイル数が３つ以上なら
-        _len = 2
-        file_count = True
-    else:
-        _len = length
-        file_count = False
-
-    send_content = ""
-    for i in range(_len):
-        attachment = content.attachments[i]
-
-        if attachment.content_type.startswith("image"):
-            fixed_content = f"画像ファイル"
-        if attachment.content_type.startswith("video"):
-            fixed_content = f"動画ファイル"
-        if attachment.content_type.startswith("audio"):
-            fixed_content = f"音声ファイル"
-        if attachment.content_type.startswith("text"):
-            fixed_content = f"テキストファイル"
-        if attachment.content_type.startswith("application"):
-            fixed_content = f"その他ファイル"
-        send_content += fixed_content
-
-        if i != _len-1:#と　もつける
-            send_content += "と"
-    #ファイルが多すぎてもこれでおっけ！
-    if file_count:
-        send_content += f"、その他{length-2}ファイル" 
-    #語尾もちゃんとつける！
-    send_content += "が送信されました"
-
-    return send_content
 
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage_filter(content, guild: discord.Guild, spkID: int):
@@ -410,10 +408,36 @@ async def yomiage_filter(content, guild: discord.Guild, spkID: int):
             fixed_content = fixed_content.replace(f'<@{mention.id}>', mention.display_name)
         
         ##コンテンツ関連の文章を生成する
-        content = search_content(content)
+        if content.attachments:
+            attach_msg = ""
+            limit = int(get_db_setting(db_data[0], guild.id, "file_limit"))
+            count = 1
+            print(count)
+            print(limit)
+            for attachment in content.attachments:
+                if count<= limit:
+                    if attachment.content_type.startswith("image"):
+                        attach_msg += "画像ファイル"
+                    elif attachment.content_type.startswith("video"):
+                        attach_msg += "動画ファイル"
+                    elif attachment.content_type.startswith("audio"):
+                        attach_msg += "音声ファイル"
+                    else:
+                        attach_msg += "ファイル"
+                    count += 1
+                    print(f"{count - 1 } / {limit}")
+                    if count <= limit:
+                        attach_msg += "と"
+                    
+                elif attachment:
+                    attach_msg += f"とその他{len(content.attachments) - (count - 1)}ファイル"
+                    break
+                    
+            attach_msg += "が添付されました。"
+            fixed_content = str(attach_msg) + fixed_content
+        else:
+            attach_msg = ""
 
-        ##コンテンツ  +　文章
-        fixed_content = content + fixed_content
 
     elif isinstance(content, str):
         fixed_content = content

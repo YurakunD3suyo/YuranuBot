@@ -8,6 +8,7 @@ settings_list = [
     ("speak_channel", "INTEGER"),
     ("auto_connect", "INTEGER"),
     ("speak_speed", "REAL"),
+    ("file_limit" , "INTEGER DEFAULT '3'"),
     ("length_limit", "INTEGER"),
     ("vc_join_message", "TEXT DEFAULT 'がさんかしたのだ！'"),
     ("vc_exit_message", "TEXT DEFAULT 'がたいせきしたのだ！'"),
