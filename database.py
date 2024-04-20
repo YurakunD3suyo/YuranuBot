@@ -72,6 +72,7 @@ def set_db_setting(cursor, conn, server_id, type, new_value):
 
     Args:
         cursor: SQLite3で取得したカーソル
+        conn: SQLite3で接続した際の接続されたやつ
         server_id: discordのサーバーID
         type: 設定内容
         new_value: 変更する設定の値
