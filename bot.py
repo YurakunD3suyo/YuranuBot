@@ -318,13 +318,13 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
     # #####!!!!!!自動接続関連!!!!!!!!!!########
     # ##接続時に自動接続する
     if after.channel != None:
-        auto_channel = get_db_setting(db_data[0], member.voice.channel.guild.id, "auto_connect")
+        auto_channel = get_db_setting(db_data[0], member.guild.id, "auto_connect")
         print(auto_channel)
         if auto_channel == after.channel.id:
             await after.channel.connect()
-            mess = get_db_setting(db_data[0], interact.guild_id, "vc_connect_message")
+            mess = get_db_setting(db_data[0], member.guild.id, "vc_connect_message")
             if mess is not None:
-                await yomiage_filter(mess, interact.guild, 1)
+                await yomiage_filter(mess, member.guild, 1)
             return # 接続したのだだけを読ませるために終わらせる
     if member.guild.voice_client:
         if before.channel != None:
