@@ -397,7 +397,7 @@ yomiage_serv_list = defaultdict(deque)
 
 ##読み上げのキューに入れる前に特定ワードを変換します
 async def yomiage_filter(content, guild: discord.Guild, spkID: int):
-    fix_words = [r'(https?://\S+)', r'<:[a-zA-Z0-9_]+:[0-9]+>', f"(ﾟ∀ﾟ)"]
+    fix_words = [r'(https?://\S+)', r'<a?:[a-zA-Z0-9_]+:[0-9]+>', f"(ﾟ∀ﾟ)"]
     fix_end_word = ["URL", "えもじ", ""]
       
     if isinstance(content, discord.message.Message):
