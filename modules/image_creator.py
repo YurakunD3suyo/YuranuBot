@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from discord.ext import commands
 from io import BytesIO
-from modules.pc_status_cmd import PCStatus
+from modules.pc_status import PCStatus
 import os
 import time
 import requests

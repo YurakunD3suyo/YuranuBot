@@ -7,7 +7,7 @@ import platform
 from discord.ext import commands, tasks
 from discord import app_commands
 from discord import Status
-from modules.pc_status_cmd import pc_status, PCStatus
+from modules.pc_status import pc_status, PCStatus
 from modules.db_settings import save_server_setting
 from modules.exception import sendException
 from modules.delete import delete_file_latency

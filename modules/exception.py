@@ -1,4 +1,7 @@
-import discord 
+import discord
+import discord.ext.commands 
+
+client: discord.ext.commands.Bot
 
 def exception_init(cli):
     global client

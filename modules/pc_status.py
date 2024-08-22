@@ -24,7 +24,7 @@ class PCStatus():
     gpu_name: str = None
     gpu_load: float = None
     gpu_mem_use: float = None
-    gpu_mem_total: float = 4.0 # GPUの最大メモリを取得できないため、自分で設定してある
+    gpu_mem_total: float = 8.0 # GPUの最大メモリを取得できないため、自分で設定してある
     gpu_mem_percent: float = None
 
 ##Windowsの場合の処理
@@ -73,6 +73,8 @@ async def pc_status():
                     pc.gpu_load = sensor.Value
                 if str(sensor.Name) == "D3D Dedicated Memory Used":
                     pc.gpu_mem_use = sensor.Value/1024
+                if str(sensor.Name) == "D3D Shared Memory Used":
+                    pc.gpu_mem_use += sensor.Value/1024
                 
     elif os_info.system == "Linux":
         pc.cpu_name = platform.processor()

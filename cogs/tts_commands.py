@@ -8,7 +8,7 @@ import random
 from modules.vc_speakers import spk_choices, user_spk_choices, find_spker
 
 from modules.messages import conn_message, zunda_conn_message
-from modules.pc_status_cmd import pc_status
+from modules.pc_status import pc_status
 from modules.yomiage_main import yomiage, queue_yomiage, sound_effects
 from modules.vc_events import vc_inout_process
 from modules.db_settings import db_load, db_init, get_server_setting, get_user_setting, save_server_setting, save_user_setting
