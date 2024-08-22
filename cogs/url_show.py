@@ -115,7 +115,8 @@ class Discord_URL_Loader( commands.Cog ):
                                     if attach.content_type.startswith("image"):
                                         logging.debug(f"{__name__} -> 画像を検出")
                                         embed.set_image(url=attach.url)
-
+                                    if attach.content_type.startswith("video"):
+                                        embed.add_field(name="動画URL", value=attach.url)
                             #送信
                             if file != None:
                                 await message.reply(embed=embed, file=file)
