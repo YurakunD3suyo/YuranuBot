@@ -74,7 +74,7 @@ async def pc_status():
                 if str(sensor.Name) == "D3D Dedicated Memory Used":
                     pc.gpu_mem_use = sensor.Value/1024
                 if str(sensor.Name) == "D3D Shared Memory Used":
-                    pc.gpu_mem_use += sensor.Value/1024
+                    pc.gpu_mem_use = pc.gpu_mem_use + sensor.Value/1024
                 
     elif os_info.system == "Linux":
         pc.cpu_name = platform.processor()
