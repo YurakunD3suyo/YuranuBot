@@ -10,9 +10,13 @@ from modules.pc_status import pc_status, PCStatus
 from modules.db_settings import save_server_setting
 from modules.exception import sendException
 from modules.delete import delete_file_latency
+from modules.yomiage_main import yomiage
 
 
 class utils(commands.Cog):
+    def __init_(self, bot: commands.Bot):
+        self.bot = bot
+
     @app_commands.command(name="dashboard", description="ダッシュボードについてなのだ")
     async def dashboard(self, interact: discord.Interaction):
         await interact.response.send_message("ZundaCordのダッシュボード「ZunDash」\nhttps://bot.yuranu.net/")
@@ -55,5 +59,38 @@ class utils(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
     
+    @app_commands.command(name="tts_announce")
+    async def tts_announce(self, interact: discord.Interaction, content: str, id: int):
+        is_owner = await self.bot.is_owner(interact.user.id)
+        if is_owner != False:
+            embed = discord.Embed(
+                title="bot管理者のみ実行可能なのだ！",
+                color=discord.Color.red()
+            )
+            await interact.response.send_message(embed=embed)
+            return
+        
+        guild = self.bot.get_guild(id)
+
+        if guild == None:
+            embed = discord.Embed(
+                title="サーバーが見つからなかったのだ！",
+                description="サーバーにbotがいるかーとか確認してみて！",
+                color=discord.Color.red()
+            )
+            await interact.response.send_message(embed=embed)
+            return
+    
+        if guild.voice_client == None:
+            embed = discord.Embed(
+                title="ボイスに接続されていなかったのだ...",
+                description="VCにbotがいるかーとか確認してみて！",
+                color=discord.Color.red()
+            )
+            await interact.response.send_message(embed=embed)
+            return
+        
+        await yomiage(content, guild)
+
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(utils(bot))
