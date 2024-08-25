@@ -18,8 +18,8 @@ class Admin( commands.Cog ):
 
     @app_commands.command(name="list_guilds", description="ボットが参加しているサーバーのリストを表示します。")
     @app_commands.default_permissions(administrator=True)
-    async def list_guilds(interaction: discord.Interaction):
-        guilds = client.guilds
+    async def list_guilds(self, interaction: discord.Interaction):
+        guilds = self.bot.guilds
         guild_list = "\n".join([f"{guild.name} (ID: {guild.id})" for guild in guilds])
 
         if guild_list:
