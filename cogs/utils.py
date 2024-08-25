@@ -91,11 +91,12 @@ class utils(commands.Cog):
             return
         
         await yomiage(content, guild)
-            embed = discord.Embed(
+        embed = discord.Embed(
                 title="読み上げしたのだ！",
                 description="アナウンスに成功しました！",
                 color=discord.Color.green()
             )
+        await interact.response.send_message(embed=embed)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(utils(bot))
