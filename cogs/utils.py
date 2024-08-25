@@ -14,7 +14,7 @@ from modules.yomiage_main import yomiage
 
 
 class utils(commands.Cog):
-    def __init_(self, bot: commands.Bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @app_commands.command(name="dashboard", description="ダッシュボードについてなのだ")
@@ -60,8 +60,8 @@ class utils(commands.Cog):
             await sendException(e, filename, line_no)
     
     @app_commands.command(name="tts_announce")
-    async def tts_announce(self, interact: discord.Interaction, content: str, id: int):
-        is_owner = await self.bot.is_owner(interact.user.id)
+    async def tts_announce(self, interact: discord.Interaction, content: str, id: str):
+        is_owner = await self.bot.is_owner(interact.user)
         if is_owner != False:
             embed = discord.Embed(
                 title="bot管理者のみ実行可能なのだ！",
@@ -70,7 +70,7 @@ class utils(commands.Cog):
             await interact.response.send_message(embed=embed)
             return
         
-        guild = self.bot.get_guild(id)
+        guild = self.bot.get_guild(int(id))
 
         if guild == None:
             embed = discord.Embed(
@@ -91,6 +91,11 @@ class utils(commands.Cog):
             return
         
         await yomiage(content, guild)
+            embed = discord.Embed(
+                title="読み上げしたのだ！",
+                description="アナウンスに成功しました！",
+                color=discord.Color.green()
+            )
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(utils(bot))
