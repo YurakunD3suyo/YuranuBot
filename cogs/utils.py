@@ -59,44 +59,5 @@ class utils(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
     
-    @app_commands.command(name="tts_announce")
-    async def tts_announce(self, interact: discord.Interaction, content: str, id: str):
-        is_owner = await self.bot.is_owner(interact.user)
-        if is_owner != False:
-            embed = discord.Embed(
-                title="bot管理者のみ実行可能なのだ！",
-                color=discord.Color.red()
-            )
-            await interact.response.send_message(embed=embed)
-            return
-        
-        guild = self.bot.get_guild(int(id))
-
-        if guild == None:
-            embed = discord.Embed(
-                title="サーバーが見つからなかったのだ！",
-                description="サーバーにbotがいるかーとか確認してみて！",
-                color=discord.Color.red()
-            )
-            await interact.response.send_message(embed=embed)
-            return
-    
-        if guild.voice_client == None:
-            embed = discord.Embed(
-                title="ボイスに接続されていなかったのだ...",
-                description="VCにbotがいるかーとか確認してみて！",
-                color=discord.Color.red()
-            )
-            await interact.response.send_message(embed=embed)
-            return
-        
-        await yomiage(content, guild)
-        embed = discord.Embed(
-                title="読み上げしたのだ！",
-                description="アナウンスに成功しました！",
-                color=discord.Color.green()
-            )
-        await interact.response.send_message(embed=embed)
-
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(utils(bot))
