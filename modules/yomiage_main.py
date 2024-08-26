@@ -50,7 +50,8 @@ fix_words = [
     [r':\w+:', "絵文字 "],
     [r'```[\s\S]*?```', "コードブロック省略"],
     [r'\|\|.*?\|\|', "、"],
-    ["～", "ー"]
+    ["～", "ー"], # のばしぼうの置き換え
+    ["\n", "、"] # 改行はすこし間をあける
 ]
 
 # (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
@@ -264,9 +265,9 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: f
 
         with wave.open(voice_file,  'rb') as f:
             # 情報取得
-            fr = f.getframerate()
-            fn = f.getnframes()
-            length = fn / fr
+            framerate = f.getframerate()
+            frames = f.getnframes()
+            length = frames / framerate
 
         file_list = [voice_file, length, 1]
 
@@ -335,7 +336,7 @@ def search_content(content: discord.message.Message):
 
 
 
-def send_voice(queue, voice_client):
+def send_voice(queue, voice_client: discord.VoiceClient):
     if not queue or voice_client.is_playing():
         return
 
@@ -345,8 +346,7 @@ def send_voice(queue, voice_client):
     latency = source[1]
     volume = source[2]
 
-    pcmaudio_fixed = PCMVolumeTransformer(FFmpegPCMAudio(directry))
-    pcmaudio_fixed.volume = volume
+    pcmaudio_fixed = PCMVolumeTransformer(FFmpegPCMAudio(directry, volume=volume))
 
     voice_client.play(pcmaudio_fixed, after=lambda e:send_voice(queue, voice_client))
 

@@ -1,6 +1,7 @@
 import sqlite3
 import logging
 import sys
+
 ###データベース関連の処理###
 
 ##設定リストの管理
