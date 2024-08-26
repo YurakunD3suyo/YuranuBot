@@ -346,7 +346,8 @@ def send_voice(queue, voice_client: discord.VoiceClient):
     latency = source[1]
     volume = source[2]
 
-    pcmaudio_fixed = PCMVolumeTransformer(FFmpegPCMAudio(directry, volume=volume))
+    pcmaudio_fixed = PCMVolumeTransformer(FFmpegPCMAudio(directry))
+    pcmaudio_fixed.volume = volume
 
     voice_client.play(pcmaudio_fixed, after=lambda e:send_voice(queue, voice_client))
 
