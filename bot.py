@@ -25,28 +25,34 @@ DIC_DIR = os.getenv("DIC_DIR")
 PREFIX = os.getenv("PREFIX")
 
 ###データベースの読み込み
+
 ## サーバー辞書共有用
 # ディレクトリが設定されている場合はその場所を指定
 if type(DIC_DIR) is str:
-    dic_data = dictionary_load(os.path.join(DIC_DIR, "dictionary.db"))
+    dict_dir = os.path.join(DIC_DIR, "dictionary.db")
 # ディレクトリが設定されていない場合はデフォルトの場所
 else:
-    dic_data = dictionary_load("dictionary.db")
+    dict_dir = "dictionary.db"
 
+# サーバー辞書読み込み
+dic_res = dictionary_load(dict_dir)
+
+if dic_res==False:
+    logging.exception("サーバー「辞書」データベースの読み込みに失敗しました")
+    sys.exit()
+else:
+    logging.debug("Database -> サーバー辞書を読み込みました。")
+
+# サーバー設定読み込み
 db_load("database.db")
-db_data = db_init()
+db_result = db_init()
 
-if db_data==False:
+if db_result==False:
     logging.exception("サーバー「設定」データベースの読み込みに失敗しました")
     sys.exit()
 else:
     logging.debug("Database -> サーバー設定を読み込みました。")
 
-if dic_data==False:
-    logging.exception("サーバー「辞書」データベースの読み込みに失敗しました")
-    sys.exit()
-else:
-    logging.debug("Database -> サーバー辞書を読み込みました。")
 
 ### インテントの生成
 intents = discord.Intents.default()
@@ -119,31 +125,6 @@ async def on_ready():
     else:
         await channel_myserv.send("botは起動しました！")
 
-        
-
-# 文章をすべて文字で表現(正規表現確認用)
-@bot.tree.context_menu(name="装飾前の本文確認")
-async def show_content(interact: discord.Interaction, message: discord.Message):
-    embed = discord.Embed(
-        color=discord.Color.green(),
-        title="メッセージは全部お見通しなのだ！",
-        description=f"```{message.content}```"
-    )
-
-    await interact.response.send_message(embed=embed)
-
-# 文章をすべて文字で表現(絵文字変換後)
-@bot.tree.context_menu(name="装飾前の本文確認(絵文字変換後)")
-async def show_content(interact: discord.Interaction, message: discord.Message):
-    content = emoji.demojize(message.content)
-
-    embed = discord.Embed(
-        color=discord.Color.green(),
-        title="メッセージは全部お見通しなのだ！",
-        description=f"```{content}```"
-    )
-    await interact.response.send_message(embed=embed)
-    
 # クライアントの実行
 if type(TOKEN)==str:
     bot.run(TOKEN)

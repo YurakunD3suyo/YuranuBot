@@ -1,8 +1,7 @@
 import discord
-import time
+import emoji
 import sys
-import os
-import platform
+
 
 from discord.ext import commands, tasks
 from discord import app_commands
@@ -58,6 +57,30 @@ class utils(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
+
+        # コンテキストメニューの実装
+        self.message_content_viewer = app_commands.ContextMenu(name="装飾前の本文確認", callback=self.show_content)
+        async def show_content(interact: discord.Interaction, message: discord.Message):
+            embed = discord.Embed(
+                color=discord.Color.green(),
+                title="メッセージは全部お見通しなのだ！",
+                description=f"```{message.content}```"
+            )
+            await interact.response.send_message(embed=embed)
+        self.bot.tree.add_command(self.message_content_viewer)
+
+
+        self.message_content_viewer_demojised = app_commands.ContextMenu(name="装飾前の本文確認(絵文字変換後)", callback=self.show_content_demojised)
+        async def show_content_demojised(interact: discord.Interaction, message: discord.Message):
+            content = emoji.demojize(message.content)
+            embed = discord.Embed(
+                color=discord.Color.green(),
+                title="メッセージは全部お見通しなのだ！",
+                description=f"```{content}```"
+            )
+            await interact.response.send_message(embed=embed)
+        self.bot.add_command(self.message_content_viewer_demojised)
+
     
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(utils(bot))
