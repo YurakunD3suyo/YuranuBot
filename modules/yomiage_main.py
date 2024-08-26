@@ -60,6 +60,7 @@ sound_effects = [
     ["どっかぁん", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
     ["サ終", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
     ["心折れた", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
+    ["腰の炎を燃やします", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
 
     ["まだだめだ", "madadameda.mp3", 0.2, None],
     ["マダダメダ", "madadameda2.mp3", 0.2, None],
