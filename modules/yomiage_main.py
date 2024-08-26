@@ -84,7 +84,7 @@ sound_effects = [
 
     ["しかのこ", "sikanoko.mp3", 0.5, None],
     ["ういびーむ", "uibeam.mp3", 0.1, None],
-    # ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None]
+    ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None],
 ]
 
 yomiage_serv_list = defaultdict(deque)
