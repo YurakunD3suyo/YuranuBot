@@ -1,14 +1,15 @@
-import discord
 import re
 import logging
-
+from typing import Optional
 from modules.db_settings import save_server_setting, get_server_setting
 from discord.ext import commands
-from discord import app_commands
+from discord import app_commands, Interaction, Message, Embed, Color, File
 
 URL_REGEX = re.compile(r"https?://(ptb\.|canary\.)?discord(?:app)?\.com/channels/(\d+)/(\d+)/(\d+)")
 
 class Discord_URL_Loader( commands.Cog ):
+
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -18,7 +19,7 @@ class Discord_URL_Loader( commands.Cog ):
         app_commands.Choice(name="使用する", value=1),
         app_commands.Choice(name="使用しない", value=0)
     ])
-    async def discord_url_load(self, interact: discord.Interaction, use: int):
+    async def discord_url_load(self, interact: Interaction, use: int):
         # DBに保存
         result = save_server_setting(interact.guild.id, "discord_url_load", use)
         
@@ -35,7 +36,7 @@ class Discord_URL_Loader( commands.Cog ):
         await interact.response.send_message("設定に失敗したのだ...")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: Message):
         #サーバー設定を読み込み、この機能を使用するかを検出
         use = get_server_setting(message.guild.id, "discord_url_load")
         if use == 1:
@@ -60,11 +61,12 @@ class Discord_URL_Loader( commands.Cog ):
                     channel = guild.get_channel(int(channel_id))
 
                     if channel != None:
-                        if channel.id == 1274365861410377749:
-                            embed=discord.Embed(
+                        # IDで弾くやつから nsfwチャンネルであるか、もしくはnsfwという文字列が含まれているチャンネルを弾くようにする
+                        if channel.is_nsfw() or ( re.search(r"nsfw", channel.name, re.IGNORECASE) is not None ) :
+                            embed=Embed(
                                 title="ちょっと！なにしてるのだ！？",
                                 description="おっと、見せられない内容なようです。",
-                                color=discord.Color.purple()
+                                color=Color.purple()
                             )
                             embed.add_field(name="チャンネル", value=f"<#{channel.id}>")
 
@@ -79,19 +81,19 @@ class Discord_URL_Loader( commands.Cog ):
                         if tar_message != None:
                             logging.debug(f"{__name__} -> メッセージを発見")
                             #Embedでいろいーろ
-                            embed=discord.Embed(
+                            embed=Embed(
                                 #メッセージの送信者
                                 title=f"Message from {tar_message.author.name}",
                                 #メッセージの内容
                                 description=f"{tar_message.content}",
 
-                                color=discord.Color.brand_green()
+                                color=Color.brand_green()
                             )
 
                             file = None
                             if guild.icon == None or tar_message == None:
                                 #アイコンがなかったとき用のイメージを用意
-                                file = discord.File(R"images\guest.png", filename="guest.png")
+                                file = File(R"images\guest.png", filename="guest.png")
 
                             #サーバーアイコンとどこのやつか表示
                             author_str = f"{guild.name} | {channel.name}"

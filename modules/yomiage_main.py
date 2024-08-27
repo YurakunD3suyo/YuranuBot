@@ -1,4 +1,3 @@
-import discord
 import platform
 import logging
 import requests
@@ -12,13 +11,16 @@ import os
 
 os_name = platform.uname().system
 
+from discord import FFmpegPCMAudio, PCMVolumeTransformer, Message, Guild, VoiceClient, Embed, Colour
+import discord.utils as utils
+
 from modules.db_settings import get_server_setting, get_user_setting
 from modules.exception import sendException
 from modules.db_vc_dictionary import get_dictionary
 from modules.delete import delete_file_latency
 from dotenv import load_dotenv
 from collections import deque, defaultdict
-from discord import FFmpegPCMAudio, PCMVolumeTransformer
+
 
 load_dotenv()
 USE_VOICEVOX_APP = os.getenv("USE_VOICEVOX_APP")
@@ -96,34 +98,38 @@ if (not os.path.isdir(VC_OUTPUT)):
     os.mkdir(VC_OUTPUT)
 
 ##読み上げのキューに入れる前に特定ワードを変換します
-async def yomiage(content, guild: discord.Guild):
+async def yomiage(content, guild: Guild):
+    """
+        # yomiage
+        読み上げのキューに入れる前の処理を行います。
+
+        - content: 読み上げる内容 ( str )
+        - guild: 読み上げサーバー ( Guild )
+    """
     # サウンドボード
     
     global ace_left
-    if type(content) == discord.Message:
+    if type(content) == Message:
         soundtext_mode = get_server_setting(guild.id, "soundtext_mode")
 
         if soundtext_mode != 0:
             for sound in sound_effects:
-                word = sound[0]
-                sound_dir = sound[1]
-                volume = sound[2]
-                reply_url = sound[3]
+                [ word, sound_dir, volume, reply_url ] = sound
 
                 fixed = content.content.replace("～", "ー")
 
-                if fixed == sound[0]:
+                if fixed == word:
                     if soundtext_mode == 1:
-                        embed = discord.Embed(
+                        embed = Embed(
                             title="ちょっと待つのだ！",
                             description="ゲームモードが有効です！VCの状況を確認してみよう。",
-                            color=discord.Colour.orange()
+                            color=Colour.orange()
                         )
                         message = await content.reply(embed=embed)
                         await message.delete(delay=4.0)
                         return
 
-                    if sound[1] == "explosion.mp3":
+                    if sound == "explosion.mp3":
                         ace_left += 1
                         
                         if ace_left >= 5:
@@ -148,7 +154,7 @@ async def yomiage(content, guild: discord.Guild):
 
                     return
 
-    if type(content) == discord.message.Message:
+    if type(content) == Message:
             ace_left == 0
 
             fixed_content = content.content
@@ -163,7 +169,7 @@ async def yomiage(content, guild: discord.Guild):
             ## チャンネルIDをチャンネル名に置き換える
             channel_mentions = re.findall(r'<#([0-9]+)>', fixed_content)
             for channel_id in channel_mentions:
-                channel = discord.utils.get(content.guild.channels, id=int(channel_id))
+                channel = utils.get(content.guild.channels, id=int(channel_id))
                 if channel:
                     fixed_content = fixed_content.replace(f'<#{channel_id}>', f'{channel.name}')
 
@@ -185,7 +191,8 @@ async def yomiage(content, guild: discord.Guild):
 
     ##fix_wordに含まれたワードをfix_end_wordに変換する
     for word in fix_words:
-        fixed_content = re.sub(word[0], word[1], fixed_content, flags=re.IGNORECASE)
+        [ replace_reg, replace_word ] = word
+        fixed_content = re.sub(replace_reg, replace_word, fixed_content, flags=re.IGNORECASE)
 
     ##文字制限の設定を取得する
     length_limit = get_server_setting(guild.id, "length_limit")
@@ -202,7 +209,7 @@ async def yomiage(content, guild: discord.Guild):
     speed = get_server_setting(guild.id, "speak_speed")
 
     usr_speed = None
-    if (type(content) == discord.message.Message):
+    if (type(content) == Message):
         usr_speed = get_user_setting(content.author.id, "speak_speed")
 
     if usr_speed != 0 and usr_speed is not None:
@@ -213,7 +220,7 @@ async def yomiage(content, guild: discord.Guild):
 
     ##読み上げ内容がメっセージの場合はユーザー話者を取得する
     spkID_usr = None
-    if (type(content)==discord.message.Message):
+    if (type(content) == Message):
         spkID_usr = get_user_setting(content.author.id, "vc_speaker")
 
     ##ユーザー話者がない場合はサーバー話者を利用する
@@ -222,7 +229,7 @@ async def yomiage(content, guild: discord.Guild):
 
     await queue_yomiage(speak_content, guild, spkID, speed)
 
-async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: float = 1):
+async def queue_yomiage(content: str, guild: Guild, spkID: int, speed: float = 1):
     try:
         logging.debug(f'"{content}" 速度: {speed}, 話者ID: {spkID}')
 
@@ -286,7 +293,7 @@ async def queue_yomiage(content: str, guild: discord.Guild, spkID: int, speed: f
         await sendException(e, filename, line_no)
 
 ##コンテンツが添付されている場合の処理
-def search_content(content: discord.message.Message):
+def search_content(content: Message):
     send_content = ""
 
     attach_length = len(content.attachments)
@@ -337,22 +344,19 @@ def search_content(content: discord.message.Message):
 
 
 
-def send_voice(queue, voice_client: discord.VoiceClient):
+def send_voice(queue, voice_client: VoiceClient):
     if not queue or voice_client.is_playing():
         return
 
     source = queue.popleft()
+    [ directory, latency, volume ] = source
 
-    directry = source[0]
-    latency = source[1]
-    volume = source[2]
-
-    pcmaudio_fixed = PCMVolumeTransformer(FFmpegPCMAudio(directry))
+    pcmaudio_fixed = PCMVolumeTransformer(FFmpegPCMAudio(directory))
     pcmaudio_fixed.volume = volume
 
     voice_client.play(pcmaudio_fixed, after=lambda e:send_voice(queue, voice_client))
 
     if latency != -1:
         ## 再生スタートが完了したら時間差でファイルを削除する。
-        delete_file_latency(directry, latency)
+        delete_file_latency(directory, latency)
 

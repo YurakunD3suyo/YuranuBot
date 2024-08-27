@@ -1,16 +1,14 @@
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from discord.ext import commands
-from io import BytesIO
-from modules.pc_status import PCStatus
-import os
-import time
 import requests
-import discord
+
+from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
+from os import path
+from discord import Guild, Member
 
 # フォントのパスを設定
-welcome_img = os.path.join('images', 'welcome.png')
+welcome_img = path.join('images', 'welcome.png')
 
-def make_welcome_image(user: discord.Member, guild: discord.Guild):
+def make_welcome_image(user: Member, guild: Guild):
     # 画像のサイズを設定
     width, height = 1280, 720
 
@@ -72,8 +70,8 @@ def make_welcome_image(user: discord.Member, guild: discord.Guild):
 
 
     # フォントのパスを設定
-    font_semi = os.path.join('fonts', 'Koruri-Semibold.ttf')
-    font_bold = os.path.join('fonts', 'Koruri-Bold.ttf')
+    font_semi = path.join('fonts', 'Koruri-Semibold.ttf')
+    font_bold = path.join('fonts', 'Koruri-Bold.ttf')
 
     # フォントサイズを指定
     font_size = 80
@@ -102,7 +100,7 @@ def make_welcome_image(user: discord.Member, guild: discord.Guild):
     # 画像を保存
     name = f'welcome-{guild.id}.png'
 
-    output_path = os.path.join("images", name)
+    output_path = path.join("images", name)
 
     base.save(output_path)
 

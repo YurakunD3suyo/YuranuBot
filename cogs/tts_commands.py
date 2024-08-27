@@ -1,6 +1,5 @@
-import discord
 from discord.ext import commands
-from discord import app_commands
+from discord import app_commands, Interaction, Message, Embed, Color, File, TextChannel
 
 import sys
 import logging
@@ -8,13 +7,13 @@ import random
 from modules.vc_speakers import spk_choices, user_spk_choices, find_spker
 
 from modules.messages import conn_message, zunda_conn_message
-from modules.pc_status import pc_status
+# from modules.pc_status import pc_status
 from modules.yomiage_main import yomiage, queue_yomiage, sound_effects
-from modules.vc_events import vc_inout_process
+# from modules.vc_events import vc_inout_process
 from modules.db_settings import db_load, db_init, get_server_setting, get_user_setting, save_server_setting, save_user_setting
 from modules.exception import sendException, exception_init
 from modules.db_vc_dictionary import dictionary_load, delete_dictionary, save_dictionary, get_dictionary
-import modules.pages as Page
+from modules import pages as Page
 
 
 class yomiage_cmds(commands.Cog):
@@ -25,7 +24,7 @@ class yomiage_cmds(commands.Cog):
         
     
     @app_commands.command(name="vc-start", description="ユーザーが接続しているボイスチャットに接続するのだ")
-    async def vc_command(self, interact: discord.Interaction):
+    async def vc_command(self, interact: Interaction):
         try:
             if (interact.user.voice is None):
                 await interact.response.send_message("ボイスチャンネルに接続していないのだ...")
@@ -48,10 +47,10 @@ class yomiage_cmds(commands.Cog):
             else:
                 length_limit = f"{length_limit}文字"
         
-            embed = discord.Embed(
+            embed = Embed(
                 title="接続したのだ！",
                 description="ボイスチャンネルに参加しました！",
-                color=discord.Color.green()
+                color=Color.green()
             )
             embed.add_field(
                 name="読み上げるチャンネル",
@@ -77,7 +76,7 @@ class yomiage_cmds(commands.Cog):
                 value="安定性、機能性向上にご協力いただき本当にありがとうございます！！",
                 inline=False
                 )
-            file = discord.File(R"images\boticon_zunda.png", filename="boticon_zunda.png")
+            file = File(R"images\boticon_zunda.png", filename="boticon_zunda.png")
             embed.set_thumbnail(url=f"attachment://boticon_zunda.png")
             embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
@@ -86,8 +85,8 @@ class yomiage_cmds(commands.Cog):
             ##読み上げるチャンネルが存在しない場合に警告文を送信
 
             if (channel is None):
-                embed = discord.Embed(
-                    color=discord.Color.red(),
+                embed = Embed(
+                    color=Color.red(),
                     title="読み上げるチャンネルがわからないのだ...",
                     description="読み上げを開始するには読み上げるチャンネルを設定してください！"
                 )
@@ -112,7 +111,7 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="server-settings", description="サーバーの読み上げ設定を表示するのだ")
-    async def check_yomi_settings(self, interact: discord.Interaction):
+    async def check_yomi_settings(self, interact: Interaction):
         vc_channel = get_server_setting(interact.guild.id, "speak_channel")
         if vc_channel is None: vc_channel = "チャンネルが未設定"
         else: vc_channel = f"<#{vc_channel}>"
@@ -134,9 +133,9 @@ class yomiage_cmds(commands.Cog):
         elif soundtextMode_ == 0: soundtextMode = "無効"
         else: soundtextMode = "設定取得時にエラー発生" 
 
-        embed = discord.Embed(
+        embed = Embed(
             title="サーバーの読み上げ設定を表示するのだ！",
-            color=discord.Color.green()
+            color=Color.green()
         )
         embed.add_field(
             name="読み上げるサーバー",
@@ -172,7 +171,7 @@ class yomiage_cmds(commands.Cog):
         await interact.response.send_message(embed=embed)
 
     @yomi.command(name="user-settings", description="ユーザーの読み上げ設定を表示するのだ")
-    async def check_user_yomi_settings(self, interact: discord.Interaction):
+    async def check_user_yomi_settings(self, interact: Interaction):
         # ユーザー設定の取得
         spk_id = get_user_setting(interact.user.id, "vc_speaker")
         #話者IDから名前を取得
@@ -193,9 +192,9 @@ class yomiage_cmds(commands.Cog):
         if disconnect_msg == "nan": disconnect_msg = "デフォルト設定"
         
         # Embedに設定内容を表示
-        embed = discord.Embed(
+        embed = Embed(
             title="ユーザーの読み上げ設定を表示するのだ！",
-            color=discord.Color.green()
+            color=Color.green()
         )
         embed.add_field(
             name="読み上げ話者",
@@ -221,7 +220,7 @@ class yomiage_cmds(commands.Cog):
         await interact.response.send_message(embed=embed)
 
     @yomi.command(name="channel", description="読み上げるチャンネルを変更するのだ")
-    async def yomiage_channel(self, interact: discord.Interaction, channel: discord.TextChannel):
+    async def yomiage_channel(self, interact: Interaction, channel: TextChannel):
         try:
             result = save_server_setting(interact.guild_id, "speak_channel", channel.id)
             if result is None:
@@ -246,7 +245,7 @@ class yomiage_cmds(commands.Cog):
             app_commands.Choice(name="アナウンス無効",value=0)
         ]
     )
-    async def yomiage_channel(self, interact: discord.Interaction, activate: int):
+    async def yomiage_channel(self, interact: Interaction, activate: int):
         try:
             result = save_server_setting(interact.guild_id, "vc_user_announce", activate)
 
@@ -269,14 +268,14 @@ class yomiage_cmds(commands.Cog):
 
     @yomi.command(name="dictionary-add", description="サーバー辞書に単語を追加するのだ")
     @app_commands.rename(text="単語", reading="かな")
-    async def vc_dictionary(self, interact: discord.Interaction, text: str, reading: str):
+    async def vc_dictionary(self, interact: Interaction, text: str, reading: str):
         try:
             result = save_dictionary(interact.guild.id, text, reading, interact.user.id)
             if result is None:
-                embed = discord.Embed(
+                embed = Embed(
                     title="正常に登録したのだ！",
                     description="サーバー辞書に単語を登録しました！",
-                    color=discord.Color.green()
+                    color=Color.green()
                 )
                 embed.add_field(
                     name="登録した単語",
@@ -301,15 +300,15 @@ class yomiage_cmds(commands.Cog):
     
 
     @yomi.command(name="dictionary-list", description="サーバー辞書の単語を表示するのだ")
-    async def vc_dictionary(self, interact: discord.Interaction):
+    async def vc_dictionary(self, interact: Interaction):
         try:
             result = get_dictionary(interact.guild.id)
             if result:
                 embeds = []
-                embed = discord.Embed(
+                embed = Embed(
                     title="サーバー辞書の単語を表示するのだ！",
                     description="サーバー辞書の単語を表示しています！",
-                    color=discord.Color.green()
+                    color=Color.green()
                 )
                 embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
@@ -321,10 +320,10 @@ class yomiage_cmds(commands.Cog):
 
                     if (i+1) % 10 == 0:  # Create a new embed every 10 words
                         embeds.append(embed)
-                        embed = discord.Embed(
+                        embed = Embed(
                             title="サーバー辞書の単語を表示するのだ！",
                             description="サーバー辞書の単語を表示するのだ！",
-                            color=discord.Color.green()
+                            color=Color.green()
                         )
                         embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
@@ -344,14 +343,14 @@ class yomiage_cmds(commands.Cog):
             await sendException(e, filename, line_no)
 
     @yomi.command(name="dictionary-delete", description="サーバー辞書の単語を削除するのだ")
-    async def vc_dictionary(self, interact: discord.Interaction, text: str):
+    async def vc_dictionary(self, interact: Interaction, text: str):
         try:
             result = delete_dictionary(interact.guild.id, text)
             if result is None:
-                embed = discord.Embed(
+                embed = Embed(
                     title="正常に削除したのだ！",
                     description="サーバー辞書の単語を削除しました！",
-                    color=discord.Color.green()
+                    color=Color.green()
                 )
                 embed.add_field(
                     name="削除した単語",
@@ -371,15 +370,15 @@ class yomiage_cmds(commands.Cog):
             await sendException(e, filename, line_no)
 
     @yomi.command(name="soundtext-list", description="サーバー辞書の単語を表示するのだ")
-    async def soundboard_list(self, interact: discord.Interaction):
+    async def soundboard_list(self, interact: Interaction):
         try:
             result = sound_effects
             if result:
                 embeds = []
-                embed = discord.Embed(
+                embed = Embed(
                     title="これを使ってみるのだ！",
                     description="使用できるサウンドテキストの一覧です。",
-                    color=discord.Color.green()
+                    color=Color.green()
                 )
                 embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
                 
@@ -391,10 +390,10 @@ class yomiage_cmds(commands.Cog):
 
                     if (i+1) % 10 == 0:  # Create a new embed every 10 words
                         embeds.append(embed)
-                        embed = discord.Embed(
+                        embed = Embed(
                             title="これを使ってみるのだ！",
                             description="使用できるサウンドテキストの一覧です。",
-                            color=discord.Color.green()
+                            color=Color.green()
                         )
                         embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
 
@@ -422,7 +421,7 @@ class yomiage_cmds(commands.Cog):
             app_commands.Choice(name="無効",value=0)
         ]
     )
-    async def soundtext_mode(self, interact: discord.Interaction, mode: int):
+    async def soundtext_mode(self, interact: Interaction, mode: int):
         try:
             result = save_server_setting(interact.guild_id, "soundtext_mode", mode)
             if result is None:
@@ -449,7 +448,7 @@ class yomiage_cmds(commands.Cog):
     @yomi.command(name="server-speaker", description="サーバーの読み上げ話者を設定するのだ")
     @app_commands.rename(id="話者")
     @app_commands.choices(id=spk_choices)
-    async def yomiage_server_speaker(self, interact:discord.Interaction,id:int):
+    async def yomiage_server_speaker(self, interact:Interaction,id:int):
         try:
             if interact.user.guild_permissions.administrator:
                 read_type = "vc_speaker"
@@ -474,7 +473,7 @@ class yomiage_cmds(commands.Cog):
     @yomi.command(name="user-speaker", description="ユーザーの読み上げ話者を設定するのだ(どのサーバーでも同期されるのだ)")
     @app_commands.rename(id="話者")
     @app_commands.choices(id=user_spk_choices)
-    async def yomiage_user_speaker(self, interact:discord.Interaction,id:int):
+    async def yomiage_user_speaker(self, interact:Interaction,id:int):
         try:
             read_type = "vc_speaker"
             result = save_user_setting(interact.user.id, read_type, id)
@@ -499,7 +498,7 @@ class yomiage_cmds(commands.Cog):
     @yomi.command(name="server-speed", description="サーバーの読み上げ速度を変更するのだ")
     @app_commands.rename(speed="速度")
     @app_commands.describe(speed="0.5~2.0")
-    async def yomiage_speed(self, interact: discord.Interaction, speed: float):
+    async def yomiage_speed(self, interact: Interaction, speed: float):
         try:
             if speed >= 0.5 or speed <=2.0:
                 read_type = "speak_speed"
@@ -524,7 +523,7 @@ class yomiage_cmds(commands.Cog):
     @yomi.command(name="user-speed", description="ユーザー読み上げ速度を変更するのだ")
     @app_commands.rename(speed="速度")
     @app_commands.describe(speed="0.5~2.0 (0: サーバー設定を使用する)")
-    async def user_speed(self, interact: discord.Interaction, speed: float):
+    async def user_speed(self, interact: Interaction, speed: float):
         try:
             if speed >= 0.5 or speed <=2.0 or speed == 0:
                 read_type = "speak_speed"
@@ -551,7 +550,7 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="length-limit", description="読み上げ文字数を制限するのだ")
-    async def yomiage_speed(self, interact: discord.Interaction, limit: int):
+    async def yomiage_speed(self, interact: Interaction, limit: int):
         try:
             read_type = "length_limit"
             result = save_server_setting(interact.guild.id, read_type, limit)
@@ -569,7 +568,7 @@ class yomiage_cmds(commands.Cog):
             await sendException(e, filename, line_no)
 
     @yomi.command(name="join-message", description="参加時の読み上げ内容を変更するのだ<<必ず最初にユーザー名が来るのだ>>")
-    async def change_vc_join_message(self, interact: discord.Interaction, text: str):
+    async def change_vc_join_message(self, interact: Interaction, text: str):
         try:
             res = save_server_setting(interact.guild_id, "vc_join_message", text)
             if res is None:
@@ -585,7 +584,7 @@ class yomiage_cmds(commands.Cog):
             await sendException(e, filename, line_no)
             
     @yomi.command(name="exit-message", description="退出時の読み上げ内容を変更するのだ<<必ず最初にユーザー名が来るのだ>>")
-    async def change_vc_exit_message(self, interact: discord.Interaction, text: str):
+    async def change_vc_exit_message(self, interact: Interaction, text: str):
         try:
             res = save_server_setting(interact.guild.id, "vc_exit_message", text)
             if res is None:
@@ -602,7 +601,7 @@ class yomiage_cmds(commands.Cog):
 
     @yomi.command(name="user-join-message", description="[ユーザー別]参加時の読み上げを設定するのだ！")
     @app_commands.describe(text="<user> : ユーザー名")
-    async def change_user_join_message(self, interact: discord.Interaction, text: str):
+    async def change_user_join_message(self, interact: Interaction, text: str):
         try:
             res = save_user_setting(interact.user.id, "conn_msg", text)
             if res is None:
@@ -618,7 +617,7 @@ class yomiage_cmds(commands.Cog):
 
     @yomi.command(name="user-exit-message", description="[ユーザー別]退席時の読み上げを設定するのだ！")
     @app_commands.describe(text="<user>: ユーザー名")
-    async def change_user_exit_message(self, interact: discord.Interaction, text: str):
+    async def change_user_exit_message(self, interact: Interaction, text: str):
         try:
             res = save_user_setting(interact.user.id, "disconn_msg", text)
             if res is None:
@@ -634,7 +633,7 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="connect-message", description="読み上げ接続時の読み上げ内容を変更するのだ")
-    async def change_vc_exit_message(self, interact: discord.Interaction, text: str):
+    async def change_vc_exit_message(self, interact: Interaction, text: str):
         try:
             read_type = "vc_connect_message"
             res = save_server_setting(interact.guild.id, read_type, text)
@@ -653,7 +652,7 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="auto-channel", description="設定したVCに自動接続するのだ(現在入っているVCが対象なのだ)")
-    async def auto_connect(self, interact: discord.Interaction, bool: bool):
+    async def auto_connect(self, interact: Interaction, bool: bool):
         try:
             if bool is True:
                 vc_id = interact.user.voice.channel.id
@@ -678,7 +677,7 @@ class yomiage_cmds(commands.Cog):
 
     
     @app_commands.command(name="vc-stop", description="ボイスチャンネルから退出するのだ")
-    async def vc_disconnect_command(self, interact: discord.Interaction):
+    async def vc_disconnect_command(self, interact: Interaction):
         try:
             if ((interact.guild.voice_client is None)):
                 await interact.response.send_message("私はボイスチャンネルに接続していないのだ...")

@@ -3,6 +3,7 @@ import requests
 import os
 
 from discord import app_commands
+from discord.app_commands import Choice
 from dotenv import load_dotenv
 from modules.yomiage_main import VC_HOST, VC_PORT
 
@@ -63,16 +64,16 @@ if USE_VOICEVOX_APP == "True":
 # リストの内容からChoiceを作りリストに追加
 #サーバー向けのリスト
 for spk_name, spk_id in spk_list:
-    spk_choices.append(app_commands.Choice(name=spk_name, value=spk_id))
+    spk_choices.append(Choice(name=spk_name, value=spk_id))
 
 #ユーザー向けのリスト
 for spk_name, spk_id in spk_list:
-    user_spk_choices.append(app_commands.Choice(name=spk_name, value=spk_id))
+    user_spk_choices.append(Choice(name=spk_name, value=spk_id))
     
 logging.debug(f"vc_speakers -> 話者リスト: {len(spk_choices)}人の話者を登録済")
 
 #ユーザー向けChoiceリストにデフォルト設定を追加
-user_spk_choices.append(app_commands.Choice(name="サーバーの話者を使用する", value=-1))
+user_spk_choices.append(Choice(name="サーバーの話者を使用する", value=-1))
 
 logging.debug(f"vc_speakers -> ユーザー話者リスト: {len(user_spk_choices)}人の話者を登録済")
 

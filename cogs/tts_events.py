@@ -1,7 +1,5 @@
-import discord
-import threading
-from discord.ext import commands
-from discord import app_commands
+# import discord
+from discord.ext import commands, Message, Member, VoiceState, Client
 
 from modules.yomiage_main import yomiage
 from modules.vc_events import vc_inout_process
@@ -13,12 +11,12 @@ class yomi(commands.Cog):
         self.bot = bot
     
     @commands.Cog.listener()
-    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+    async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState):
         ###ボイスチャンネル内で変化があった時の処理
         await vc_inout_process(member, before, after, self.bot)
 
     @commands.Cog.listener() ##読み上げ用のイベント
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: Message):
         if message.guild is None: 
             return
         if message.guild.voice_client is None: # ギルド内に接続していない場合は無視
