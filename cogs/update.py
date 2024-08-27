@@ -2,12 +2,11 @@ import os
 import sys
 import dotenv
 import logging
-import discord
+# import discord
 import asyncio
 import subprocess
 
-from discord import app_commands
-from discord import Object
+from discord import app_commands, Object, Interaction, Embed, Color
 from discord.ext import commands
 
 
@@ -42,13 +41,13 @@ class Update(commands.Cog):
     # 管理コマンド関係 -----------------------------
     @app_commands.command(name="op-update", description="(管理コマンド)botをアップデートして自動再起動するのだ")
     @app_commands.guilds(support_obj)
-    async def op_update(self, interact: discord.Interaction):
+    async def op_update(self, interact: Interaction):
         # Embedを先に送信し、アップデートを促す
         #embedを作成
-        embed = discord.Embed(
+        embed = Embed(
             title="更新中なのだ...",
             description="しばらくお待ちください...",
-            color=discord.Color.blue()
+            color=Color.blue()
         )
         embed.add_field(
             name="アップデート状態",
@@ -63,10 +62,10 @@ class Update(commands.Cog):
 
         #エラーがない場合は続行、エラーの場合は停止
         if len(error) <= 0:
-            embed = discord.Embed(
+            embed = Embed(
                 title="更新中なのだ...",
                 description="しばらくお待ちください...",
-                color=discord.Color.green()
+                color=Color.green()
             )
             embed.add_field(
                 name="アップデート状態",
@@ -76,10 +75,10 @@ class Update(commands.Cog):
             asyncio.sleep(2)
             sys.exit()
         else: 
-            embed = discord.Embed(
+            embed = Embed(
                 title="更新に失敗したのだ",
                 description="エラーが発生したようです...",
-                color=discord.Color.red()
+                color=Color.red()
             )
             embed.add_field(
                 name="アップデート状態",

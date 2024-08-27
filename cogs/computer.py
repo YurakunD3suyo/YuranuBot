@@ -1,16 +1,12 @@
-import discord
 import time
-import sys
 import os
 import platform
 
+from discord import app_commands, Status, CustomActivity, Embed, Color, Interaction, __version__ as discord_version
 from discord.ext import commands, tasks
-from discord import app_commands
-from discord import Status
+
 from modules.pc_status import pc_status, PCStatus
-from modules.db_settings import save_server_setting
-from modules.exception import sendException
-from modules.delete import delete_file_latency
+
 
 class Computer( commands.Cog ):
     def __init__(self, bot: commands.Bot):
@@ -66,7 +62,7 @@ class Computer( commands.Cog ):
 
                 self.rpc_mode = 0
             
-            await self.bot.change_presence(status=status, activity=discord.CustomActivity(name=activity_message)) 
+            await self.bot.change_presence(status=status, activity=CustomActivity(name=activity_message)) 
 
             self.rpc_mode += 1
 
@@ -89,7 +85,7 @@ class Computer( commands.Cog ):
             await ctx.reply("✅ RPC Loop Started!")
     
     @app_commands.command(name="status",description="Botを稼働しているPCの状態を表示するのだ")#PCの状態
-    async def status(self, interact: discord.Interaction):
+    async def status(self, interact: Interaction):
         # PCの状態を取得
         pc = await pc_status()
 
@@ -111,15 +107,15 @@ class Computer( commands.Cog ):
         guild_count = len(self.bot.guilds)
         user_count = sum(len(guild.members) for guild in self.bot.guilds)
 
-        embed = discord.Embed(
+        embed = Embed(
             title="サーバーの稼働状況なのだ！",
-            color=discord.Color.green()
+            color=Color.green()
         )
         embed.add_field(name="> Bot Detail",
                         value=f"・{guild_count} Guilds  |  {user_count} Users\n"+
                               f"・Ping: {(self.bot.latency*1000):.1f}ms\n"+
                               f"・Python: Version{py_version}\n"+
-                              f"・Discord.py: Version{discord.__version__}\n",
+                              f"・Discord.py: Version{discord_version}\n",
                         inline=False)
         
         embed.add_field(name="> Server Detail",

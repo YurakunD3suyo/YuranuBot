@@ -1,9 +1,9 @@
-import discord
 import asyncio
 import random
 
-from discord import app_commands
+from discord import app_commands, Embed, Interaction, ButtonStyle, Embed, Color
 from discord.ext import commands
+from discord.ui import Button, View, TextInput, Modal
 
 class TeamAssignment:
     def __init__(self):
@@ -32,12 +32,12 @@ team = app_commands.Group(name="team", description="チーム関連のコマン�
 
 @app_commands.command(name="join_list", description="ゲームのチーム分けを行います。")
 @app_commands.describe(list_size="List of team sizes (comma separated)")
-async def join_list(interaction: discord.Interaction, list_size: str):
-    button = discord.ui.Button(label="参加", style=discord.ButtonStyle.primary, custom_id="join_button")
-    execute_button = discord.ui.Button(label="実行", style=discord.ButtonStyle.danger, custom_id="execute_button")
-    cancel_button = discord.ui.Button(label="取消", style=discord.ButtonStyle.secondary, custom_id="cancel_button")
-    edit_button = discord.ui.Button(label="変更", style=discord.ButtonStyle.primary, custom_id="edit_button")
-    view = discord.ui.View()
+async def join_list(interaction: Interaction, list_size: str):
+    button = Button(label="参加", style=ButtonStyle.primary, custom_id="join_button")
+    execute_button = Button(label="実行", style=ButtonStyle.danger, custom_id="execute_button")
+    cancel_button = Button(label="取消", style=ButtonStyle.secondary, custom_id="cancel_button")
+    edit_button = Button(label="変更", style=ButtonStyle.primary, custom_id="edit_button")
+    view = View()
     view.add_item(button)
     view.add_item(execute_button)
     view.add_item(cancel_button)
@@ -54,14 +54,14 @@ async def join_list(interaction: discord.Interaction, list_size: str):
     await interaction.response.send_message(message_content, view=view)
 
 @commands.Cog.listener()
-async def on_interaction(inter: discord.Interaction):
+async def on_interaction(inter: Interaction):
     try:
         if inter.data['component_type'] == 2:
             await on_button_click(inter)
     except KeyError:
         pass
 
-async def on_button_click(inter: discord.Interaction):
+async def on_button_click(inter: Interaction):
     if inter.data['custom_id'] == "execute_button":
         if inter.user.id != team_assignment.command_issuer_id:
             await inter.response.send_message("この操作はコマンドを使用したユーザーのみが実行できます。", ephemeral=True)
@@ -74,7 +74,7 @@ async def on_button_click(inter: discord.Interaction):
             await not_participants.delete()
         else:
             teams = await team_assignment.split_teams()
-            embed = discord.Embed(title="チーム分け結果", color=discord.Color.green())
+            embed = Embed(title="チーム分け結果", color=Color.green())
             for idx, team in enumerate(teams, start=1):
                 team_members = "\n".join([participant.display_name for participant in team])
                 embed.add_field(name=f"チーム {idx}", value=team_members, inline=False)
@@ -109,13 +109,13 @@ async def on_button_click(inter: discord.Interaction):
         edit_modal = EditTeamSizesModal()
         await inter.response.send_modal(edit_modal)
         
-class EditTeamSizesModal(discord.ui.Modal):
+class EditTeamSizesModal(Modal):
     def __init__(self):
         super().__init__(title="チームサイズの編集")
-        self.team_sizes_input = discord.ui.TextInput(label="チーム各人数",placeholder='チームサイズをカンマで区切って入力してください', custom_id='team_sizes_input')
+        self.team_sizes_input = TextInput(label="チーム各人数",placeholder='チームサイズをカンマで区切って入力してください', custom_id='team_sizes_input')
         self.add_item(self.team_sizes_input)
         
-    async def on_submit(self, interaction:discord.Interaction):
+    async def on_submit(self, interaction: Interaction):
         team_sizes_str = self.team_sizes_input.value
         team_assignment.team_sizes = [int(size) for size in team_sizes_str.split(',')]
         team_assignment.team_count = len(team_assignment.team_sizes)
@@ -124,5 +124,5 @@ class EditTeamSizesModal(discord.ui.Modal):
 
 async def update_participants_embed():
     participant_names = "\n".join(["・" + participant.display_name for participant in team_assignment.participants])
-    embed = discord.Embed(title=f"参加している人 (チーム数:{team_assignment.team_count})", description=f"{participant_names}", color=discord.Color.blue())
+    embed = Embed(title=f"参加している人 (チーム数:{team_assignment.team_count})", description=f"{participant_names}", color=Color.blue())
     return embed

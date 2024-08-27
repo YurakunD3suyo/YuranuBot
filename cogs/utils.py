@@ -1,10 +1,8 @@
-import discord
 import emoji
 import sys
 
-
 from discord.ext import commands, tasks
-from discord import app_commands
+from discord import app_commands, Interaction, Message, Embed, Color
 from modules.pc_status import pc_status, PCStatus
 from modules.db_settings import save_server_setting
 from modules.exception import sendException
@@ -17,7 +15,7 @@ class utils(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="dashboard", description="ダッシュボードについてなのだ")
-    async def dashboard(self, interact: discord.Interaction):
+    async def dashboard(self, interact: Interaction):
         await interact.response.send_message("ZundaCordのダッシュボード「ZunDash」\nhttps://bot.yuranu.net/")
 
     @app_commands.command(name="serv-join-message", description="サーバー参加者へメッセージを送信するチャンネルを設定するのだ！")
@@ -25,10 +23,10 @@ class utils(commands.Cog):
     @app_commands.describe(activate="メッセージを送信する？(コマンドを実行した場所が送信場所になるのだ)")
     @app_commands.choices(
         activate=[
-            discord.app_commands.Choice(name="送信する",value=1),
-            discord.app_commands.Choice(name="送信しない",value=0)
+            app_commands.Choice(name="送信する",value=1),
+            app_commands.Choice(name="送信しない",value=0)
         ])
-    async def serv_join_message(self, interact: discord.Interaction, activate: int):
+    async def serv_join_message(self, interact: Interaction, activate: int):
         try:
             ##管理者のみ実行可能
             if interact.user.guild_permissions.administrator:
@@ -60,9 +58,9 @@ class utils(commands.Cog):
 
         # コンテキストメニューの実装
         self.message_content_viewer = app_commands.ContextMenu(name="装飾前の本文確認", callback=self.show_content)
-        async def show_content(interact: discord.Interaction, message: discord.Message):
-            embed = discord.Embed(
-                color=discord.Color.green(),
+        async def show_content(interact: Interaction, message: Message):
+            embed = Embed(
+                color=Color.green(),
                 title="メッセージは全部お見通しなのだ！",
                 description=f"```{message.content}```"
             )
@@ -71,10 +69,11 @@ class utils(commands.Cog):
 
 
         self.message_content_viewer_demojised = app_commands.ContextMenu(name="装飾前の本文確認(絵文字変換後)", callback=self.show_content_demojised)
-        async def show_content_demojised(interact: discord.Interaction, message: discord.Message):
+        
+        async def show_content_demojised(interact: Interaction, message: Message):
             content = emoji.demojize(message.content)
-            embed = discord.Embed(
-                color=discord.Color.green(),
+            embed = Embed(
+                color=Color.green(),
                 title="メッセージは全部お見通しなのだ！",
                 description=f"```{content}```"
             )

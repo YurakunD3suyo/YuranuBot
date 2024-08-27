@@ -1,12 +1,6 @@
 import platform
-import discord
 import logging
 import psutil
-import asyncio
-import psutil
-import sys
-
-from discord.ext import commands
 
 battery = psutil.sensors_battery()
 
