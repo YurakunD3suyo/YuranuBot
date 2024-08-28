@@ -89,6 +89,7 @@ class Dictionary(commands.Cog):
             await sendException(e, filename, line_no)
 
     @dict_cmd.command(name="delete", description="サーバー辞書の単語を削除するのだ")
+    @app_commands.rename(text="単語")
     async def vc_dictionary(self, interact: Interaction, text: str):
         try:
             result = delete_dictionary(interact.guild.id, text)

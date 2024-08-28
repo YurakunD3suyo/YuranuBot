@@ -117,6 +117,7 @@ class User(commands.Cog):
             await sendException(e, filename, line_no)
 
     @user.command(name="join-message", description="[ユーザー別]参加時の読み上げを設定するのだ！")
+    @app_commands.rename(text="文章")
     @app_commands.describe(text="<user> : ユーザー名")
     async def change_user_join_message(self, interact: Interaction, text: str):
         try:
@@ -133,6 +134,7 @@ class User(commands.Cog):
             await sendException(e, filename, line_no)
 
     @user.command(name="exit-message", description="[ユーザー別]退席時の読み上げを設定するのだ！")
+    @app_commands.rename(text="文章")
     @app_commands.describe(text="<user>: ユーザー名")
     async def change_user_exit_message(self, interact: Interaction, text: str):
         try:

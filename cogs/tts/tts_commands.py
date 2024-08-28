@@ -1,5 +1,6 @@
 from discord.ext import commands
 from discord import app_commands, Interaction, Embed, Color, File, TextChannel
+from discord.app_commands import Choice
 
 import sys
 import logging
@@ -108,6 +109,7 @@ class yomiage_cmds(commands.Cog):
             await sendException(e, filename, line_no)
 
     @yomi.command(name="channel", description="読み上げるチャンネルを変更するのだ")
+    @app_commands.rename(channel="読み上げるチャンネル")
     async def yomiage_channel(self, interact: Interaction, channel: TextChannel):
         try:
             result = save_server_setting(interact.guild_id, "speak_channel", channel.id)
@@ -128,9 +130,9 @@ class yomiage_cmds(commands.Cog):
     @app_commands.rename(activate="有効無効")
     @app_commands.choices(
         activate=[
-            app_commands.Choice(name="有効(ユーザー別有効)", value=2),
-            app_commands.Choice(name="有効(ユーザー別無効)",value=1),
-            app_commands.Choice(name="アナウンス無効",value=0)
+            Choice(name="有効(ユーザー別有効)", value=2),
+            Choice(name="有効(ユーザー別無効)",value=1),
+            Choice(name="アナウンス無効",value=0)
         ]
     )
     async def yomiage_channel(self, interact: Interaction, activate: int):
@@ -157,6 +159,7 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="connect-message", description="読み上げ接続時の読み上げ内容を変更するのだ")
+    @app_commands.rename(text="文章")
     async def change_vc_exit_message(self, interact: Interaction, text: str):
         try:
             read_type = "vc_connect_message"
@@ -176,9 +179,14 @@ class yomiage_cmds(commands.Cog):
 
 
     @yomi.command(name="auto-channel", description="設定したVCに自動接続するのだ(現在入っているVCが対象なのだ)")
-    async def auto_connect(self, interact: Interaction, bool: bool):
+    @app_commands.rename(bool="有効無効")
+    @app_commands.choices(bool=[
+        Choice(name="有効", value=1),
+        Choice(name="無効", value=0)
+    ])
+    async def auto_connect(self, interact: Interaction, bool: int):
         try:
-            if bool is True:
+            if bool == 1:
                 vc_id = interact.user.voice.channel.id
                 if interact.user.voice is not None: ##設定するユーザーがチャンネルに入っていることを確認するのだ
                     res = save_server_setting(interact.guild_id, "auto_connect", vc_id)

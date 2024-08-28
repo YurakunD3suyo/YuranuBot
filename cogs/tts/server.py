@@ -122,8 +122,8 @@ class Server( commands.Cog ):
         await interact.response.send_message(embed=embed)  
 
     @server.command(name="length-limit", description="読み上げ文字数を制限するのだ")
-    @app_commands.rename(speed="文字数")
-    @app_commands.describe(speed="0: 制限を無効化")
+    @app_commands.rename(limit="文字数")
+    @app_commands.describe(limit="0: 制限を無効化")
     async def yomiage_speed(self, interact: Interaction, limit: int):
         try:
             read_type = "length_limit"
@@ -161,6 +161,7 @@ class Server( commands.Cog ):
             await sendException(e, filename, line_no)
             
     @server.command(name="exit-message", description="退出時の読み上げ内容を変更するのだ<<必ず最初にユーザー名が来るのだ>>")
+    @app_commands.rename(text="文章")
     async def change_vc_exit_message(self, interact: Interaction, text: str):
         try:
             res = save_server_setting(interact.guild.id, "vc_exit_message", text)
