@@ -21,6 +21,8 @@ class Update(commands.Cog):
     async def op_update(self, interact: Interaction):
         #Botの所有者かどうかの判断
         appinfo = await self.bot.application_info()
+        print(appinfo)
+        
         bot_owner = appinfo.owner.id
 
         #管理者でない場合はメッセージを流して終わり
