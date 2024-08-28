@@ -93,6 +93,7 @@ class SoundTextCommands( commands.Cog ):
                     color=Color.green()
                 )
                 embed.add_field(name="単語名", value=word)
+                embed.add_field(name="ファイル名", value=uniquename)
                 await interact.response.send_message(embed=embed)
             
             else:
@@ -125,6 +126,7 @@ class SoundTextCommands( commands.Cog ):
                 description="サウンドテキストは見つかりませんでした。",
                 color=Color.orange()
             )
+            embed.add_field(name="単語名", value=word)
             await interact.response.send_message(embed=embed)
             return
 
@@ -140,7 +142,7 @@ class SoundTextCommands( commands.Cog ):
             embed = Embed(
                 title="削除に失敗したのだ...",
                 description="削除できませんでした。管理者にお問い合わせください。",
-                color=Color.green()
+                color=Color.red()
             )
             embed.add_field(name="エラー文", value=result)
             
@@ -199,7 +201,7 @@ class SoundTextCommands( commands.Cog ):
                 await Page.Simple().start(interact, pages=embeds)
                 return
             else:
-                await interact.response.send_message("登録されている単語はないのだ...")
+                await interact.response.send_message("サウンドテキストは登録されてないのだ...")
                 return
 
         except Exception as e:
