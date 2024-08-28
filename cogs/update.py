@@ -21,12 +21,16 @@ class Update(commands.Cog):
     async def op_update(self, interact: Interaction):
         #Botの所有者かどうかの判断
         appinfo = await self.bot.application_info()
-        print(appinfo)
         
-        bot_owner = appinfo.owner.id
+        # botの管理者を取得
+        owners = []
+        if appinfo.team:
+            owners = [member.id for member in appinfo.team.members]
+        else:
+            owners = [appinfo.owner.id]
 
         #管理者でない場合はメッセージを流して終わり
-        if bot_owner != interact.user.id:
+        if not(interact.user.id in owners):
             await interact.response.send_message("このコマンドは実行できません。")
             return
 
