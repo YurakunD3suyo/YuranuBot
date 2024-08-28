@@ -14,6 +14,7 @@ os_name = platform.uname().system
 from discord import FFmpegPCMAudio, PCMVolumeTransformer, Message, Guild, VoiceClient, Embed, Colour
 import discord.utils as utils
 from modules.db_soundtext import get_soundtext_list
+from cogs.tts.soundtext_cmds import SOUNDTEXT_DIR
 from modules.db_settings import get_server_setting, get_user_setting
 from modules.exception import sendException
 from modules.db_vc_dictionary import get_dictionary
@@ -42,8 +43,6 @@ VC_OUTPUT = "./yomiage_data/"
 FS = 24000
 VC_HOST = "127.0.0.1"
 VC_PORT = 50021
-
-SOUNDBOARD_DIR = "./sounds/"
 
 fix_words = [
     [r'(https?://\S+)', "URL省略 "],
@@ -109,7 +108,7 @@ async def yomiage(content, guild: Guild):
                     
                     logging.debug(f"サウンドボードの単語を検出: {content.content}")
 
-                    sound_file = f"{SOUNDBOARD_DIR}{sound_dir}"
+                    sound_file = f"{SOUNDTEXT_DIR}{guild.id}/{sound_dir}"
 
                     file_list = [sound_file, -1, volume]
                     queue = yomiage_serv_list[guild.id]
