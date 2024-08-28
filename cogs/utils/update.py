@@ -53,12 +53,13 @@ class Update(commands.Cog):
         #githubからpullする
         result = subprocess.run(['git', 'pull'], capture_output=True, text=True)
         output = result.stdout
+        errcode = result.returncode
         error = result.stderr
 
         logging.debug(f"update -> Bot Updated (output: {output}, err: {error})")
 
         #エラーがない場合は続行、エラーの場合は停止
-        if len(error) <= 0:
+        if errcode != 0:
             # すでに最新の場合は起動したままにする。
             if output == "Already up to date.\n":
                 embed = Embed(
