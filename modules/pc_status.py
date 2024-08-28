@@ -43,6 +43,7 @@ if platform.uname().system == "Windows":
     # computer.IsStorageEnabled = True
 
     computer.Open()
+    logging.debug("LibreHardWareMonitorLib -> Lib Opened")
 
 async def pc_status():
     os_info = platform.uname()
