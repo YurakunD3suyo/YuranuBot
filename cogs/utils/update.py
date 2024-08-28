@@ -59,7 +59,7 @@ class Update(commands.Cog):
         logging.debug(f"update -> Bot Updated (output: {output}, err: {error})")
 
         #エラーがない場合は続行、エラーの場合は停止
-        if errcode != 0:
+        if errcode == 0:
             # すでに最新の場合は起動したままにする。
             if output == "Already up to date.\n":
                 embed = Embed(
