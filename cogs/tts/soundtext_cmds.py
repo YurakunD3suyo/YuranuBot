@@ -131,20 +131,21 @@ class SoundTextCommands( commands.Cog ):
         # データベースから削除
         result = delete_soundtext(interact.guild.id, word)
         # 効果音を削除
-        for word, path in del_st:
-            try:
-                full_path = os.path.join(SOUNDTEXT_DIR, interact.guild.id, path)
-                os.remove(full_path)
-            except FileNotFoundError:
-                embed = Embed(
-                    title="削除に失敗したのだ...",
-                    description="削除できませんでした。管理者にお問い合わせください。",
-                    color=Color.green()
-                )
-                embed.add_field(name="エラー文", value=result)
-                
-                await interact.response.send_message(embed=embed)
-                return
+        print(del_st)
+        [ word, path ] = del_st
+        try:
+            full_path = os.path.join(SOUNDTEXT_DIR, interact.guild.id, path)
+            os.remove(full_path)
+        except FileNotFoundError:
+            embed = Embed(
+                title="削除に失敗したのだ...",
+                description="削除できませんでした。管理者にお問い合わせください。",
+                color=Color.green()
+            )
+            embed.add_field(name="エラー文", value=result)
+            
+            await interact.response.send_message(embed=embed)
+            return
 
         if result == None:
             embed = Embed(

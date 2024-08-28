@@ -76,7 +76,7 @@ class Update(commands.Cog):
             
             embed = Embed(
                 title="更新中できたのだ！！",
-                description="アップデートが完了しました！",
+                description="アップデートが完了しました！再起動しています...",
                 color=Color.green()
             )
             embed.add_field(
