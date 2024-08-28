@@ -8,9 +8,10 @@ import time
 from discord import Intents
 from discord.ext import commands
 from dotenv import load_dotenv
-from modules.db_settings import db_load, db_init
 from modules.exception import exception_init
+from modules.db_settings import db_load, db_init
 from modules.db_vc_dictionary import dictionary_load
+from modules.db_soundtext import soundtext_load
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -52,6 +53,13 @@ if db_result==False:
 else:
     logging.debug("Database -> サーバー設定を読み込みました。")
 
+st_result = soundtext_load("soundtext.db")
+
+if st_result==False:
+    logging.exception("サーバー「設定」データベースの読み込みに失敗しました")
+    sys.exit()
+else:
+    logging.debug("Database -> サーバー設定を読み込みました。")
 
 ### インテントの生成
 intents = Intents.default()

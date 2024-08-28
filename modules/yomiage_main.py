@@ -13,7 +13,7 @@ os_name = platform.uname().system
 
 from discord import FFmpegPCMAudio, PCMVolumeTransformer, Message, Guild, VoiceClient, Embed, Colour
 import discord.utils as utils
-
+from modules.db_soundtext import get_soundtext_list
 from modules.db_settings import get_server_setting, get_user_setting
 from modules.exception import sendException
 from modules.db_vc_dictionary import get_dictionary
@@ -57,39 +57,6 @@ fix_words = [
 ]
 
 # (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
-sound_effects = [
-    ["そらぬの心", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-    ["どっかぁん", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-    ["サ終", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-    ["心折れた", "explosion.mp3", 0.15, "https://tenor.com/view/house-explosion-explode-boom-kaboom-gif-19506150"],
-    ["翔平", "otani1.mp3", 0.15, None],
-
-    ["まだだめだ", "madadameda.mp3", 0.2, None],
-    ["マダダメダ", "madadameda2.mp3", 0.2, None],
-    ["ばばんばばん", "ace.mp3", 0.2, None],
-    ["俺はハンターだ！！", "im a hunter.mp3", 0.5, None],
-    ["消えてもらおうか！！", "kietemoraouka.mp3", 0.6, None],
-    ["私はすべての場所に", "ULT-OMEN.mp3", 0.5, None],
-    ["ようこそ私の世界へ", "ULT-VIPER.mp3", 0.5, None],
-    ["狩りの時間よ！", "ULT-REYNA.mp3", 0.5, None],
-    ["見てなよ！", "ULT-JETT.mp3", 0.6, None],
-
-    ["南部EQ", "nanbueq.mp3", 0.7, None],
-    ["あきかきEQ", "Akikaki_EQ.mp3", 0.2, None],
-
-    ["あばばっば", "abababba.mp3", 0.5, None],
-
-    ["まげちゃーん！", "maggechaaan.mp3", 0.5, None],
-    ["ぬーぶ", "You are noob.mp3", 0.2, None],
-    ["ざんねん", "zannen.mp3", 0.5, None],
-    ["おわあ！", "owaa.mp3", 0.5, None],
-    ["すぐなえてこそいざ", "sugunaete.mp3", 0.4, None],
-
-    ["しかのこ", "sikanoko.mp3", 0.5, None],
-    ["ういびーむ", "uibeam.mp3", 0.1, None],
-    ["(スパイク設置)", "valorant-spike-plant.mp3", 1, None],
-]
-
 yomiage_serv_list = defaultdict(deque)
 ace_left = 0
 
@@ -113,8 +80,10 @@ async def yomiage(content, guild: Guild):
         soundtext_mode = get_server_setting(guild.id, "soundtext_mode")
 
         if soundtext_mode != 0:
+            sound_effects = get_soundtext_list(guild.id)
             for sound in sound_effects:
-                [ word, sound_dir, volume, reply_url ] = sound
+                [ word, sound_dir ] = sound
+                volume = 0.2 # 仮なので0.2で統一
 
                 fixed = content.content.replace("～", "ー")
 
@@ -149,8 +118,8 @@ async def yomiage(content, guild: Guild):
                     if not guild.voice_client.is_playing():
                         send_voice(queue, guild.voice_client)
 
-                    if reply_url is not None:
-                        await content.reply(reply_url)
+                    # if reply_url is not None:
+                    #     await content.reply(reply_url)
 
                     return
 
