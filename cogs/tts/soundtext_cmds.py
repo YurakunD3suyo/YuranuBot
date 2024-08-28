@@ -119,7 +119,7 @@ class SoundTextCommands( commands.Cog ):
         
         # 見つからない場合はエラーを送信
         del_st = find_soundtext(interact.guild.id, word)
-        if result == None:
+        if del_st == None:
             embed = Embed(
                 title="サウンドテキストが見つからなかったのだ...",
                 description="サウンドテキストは見つかりませんでした。",
