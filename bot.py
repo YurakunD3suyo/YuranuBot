@@ -85,15 +85,18 @@ logging.debug("discord.py -> ツリー生成完了")
 async def on_ready():
     exceptions = False
 
-    ##cogファイルを読み込む
-    for file in os.listdir(os.path.join(ROOT_DIR, "cogs")):
-        if file.endswith(".py"):
-            try:
-                await bot.load_extension(f"cogs.{file[:-3]}")
-                logging.info(f'discord.py -> 読み込み完了: {file[:-3]}')
-            except Exception as e:
-                logging.exception(f'discord.py -> 読み込み失敗: {file[:-3]}')
-                logging.exception(e)
+    # cogファイルを読み込む(cogフォルダ内すべてのフォルダを検索)
+    for dirpath, _, filenames in os.walk(os.path.join(ROOT_DIR, "cogs")):
+        for filename in filenames:
+            if filename.endswith(".py"):
+                path = os.path.relpath(os.path.join(dirpath, filename), ROOT_DIR)
+                module = path.replace(os.sep, ".")[:-3]
+                try:
+                    await bot.load_extension(module)
+                    logging.info(f'discord.py -> 読み込み完了: {module}')
+                except Exception as e:
+                    logging.exception(f'discord.py -> 読み込み失敗: {module}')
+                    logging.exception(e)
                 
     try:
         ##jishakuを読み込む

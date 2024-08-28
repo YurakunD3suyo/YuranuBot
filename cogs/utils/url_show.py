@@ -8,12 +8,10 @@ from discord import app_commands, Interaction, Message, Embed, Color, File
 URL_REGEX = re.compile(r"https?://(ptb\.|canary\.)?discord(?:app)?\.com/channels/(\d+)/(\d+)/(\d+)")
 
 class Discord_URL_Loader( commands.Cog ):
-
-
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="discord-url-load", description="DiscordのメッセージURLからメッセージを取得するのだ")
+    @app_commands.command(name="discord-message", description="DiscordのメッセージURLからメッセージを取得するのだ")
     @app_commands.rename(use="設定")
     @app_commands.choices(use=[
         app_commands.Choice(name="使用する", value=1),

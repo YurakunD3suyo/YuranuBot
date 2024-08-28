@@ -14,11 +14,13 @@ class utils(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="dashboard", description="ダッシュボードについてなのだ")
+    utility = app_commands.Group(name="utility", description="ユーティリティコマンド関連なのだ")
+
+    @utility.command(name="dashboard", description="ダッシュボードについてなのだ")
     async def dashboard(self, interact: Interaction):
         await interact.response.send_message("ZundaCordのダッシュボード「ZunDash」\nhttps://bot.yuranu.net/")
 
-    @app_commands.command(name="serv-join-message", description="サーバー参加者へメッセージを送信するチャンネルを設定するのだ！")
+    @utility.command(name="welcome-message", description="サーバー参加者へメッセージを送信するチャンネルを設定するのだ！")
     @app_commands.rename(activate="メッセージ送信のオンオフ")
     @app_commands.describe(activate="メッセージを送信する？(コマンドを実行した場所が送信場所になるのだ)")
     @app_commands.choices(

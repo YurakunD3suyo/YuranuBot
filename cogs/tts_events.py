@@ -1,5 +1,6 @@
 # import discord
-from discord.ext import commands, Message, Member, VoiceState, Client
+from discord import Message, Member, VoiceState
+from discord.ext import commands
 
 from modules.yomiage_main import yomiage
 from modules.vc_events import vc_inout_process
