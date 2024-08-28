@@ -134,7 +134,7 @@ class SoundTextCommands( commands.Cog ):
         print(del_st)
         [ word, path ] = del_st
         try:
-            full_path = os.path.join(SOUNDTEXT_DIR, interact.guild.id, path)
+            full_path = os.path.join(SOUNDTEXT_DIR, f"{interact.guild.id}", path)
             os.remove(full_path)
         except FileNotFoundError:
             embed = Embed(
