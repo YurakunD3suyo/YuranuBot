@@ -54,14 +54,17 @@ class yomiage_cmds(commands.Cog):
             embed.add_field(
                 name="読み上げるチャンネル",
                 value=f"> {channel}"
+                inline=False
             )
             embed.add_field(
                 name="読み上げ文字数の制限",
                 value=f"> {length_limit}",
+                inline=False
             )
             embed.add_field(
                 name="読み上げスピード",
                 value=f"> {yomiage_speed}",
+                inline=False
             )
             embed.add_field(
                 name="**VOICEVOXを使用しています!**",
