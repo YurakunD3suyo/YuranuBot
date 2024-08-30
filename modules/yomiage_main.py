@@ -154,7 +154,7 @@ async def yomiage(content, guild: Guild):
     dicts = get_dictionary(guild.id)
     if dicts != None:
         for text, reading, user in dicts:
-            fixed_content = re.sub(replace_reg, replace_word, fixed_content, flags=re.IGNORECASE)
+            fixed_content = re.sub(text, reading, fixed_content, flags=re.IGNORECASE)
 
     ##fix_wordに含まれたワードをfix_end_wordに変換する
     for word in fix_words:
