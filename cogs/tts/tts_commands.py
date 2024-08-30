@@ -58,23 +58,16 @@ class yomiage_cmds(commands.Cog):
             embed.add_field(
                 name="読み上げ文字数の制限",
                 value=f"> {length_limit}",
-                inline=False
             )
             embed.add_field(
                 name="読み上げスピード",
                 value=f"> {yomiage_speed}",
-                inline=False
             )
             embed.add_field(
                 name="**VOICEVOXを使用しています!**",
                 value="**[VOICEVOX、音声キャラクターの利用規約](<https://voicevox.hiroshiba.jp/>)を閲覧のうえ、正しく使うのだ！**",
                 inline=False
             )
-            embed.add_field(
-                name="自然係サーバーの方々によりずんだぼっとがパワーアップしました！",
-                value="安定性、機能性向上にご協力いただき本当にありがとうございます！！",
-                inline=False
-                )
             file = File(R"images\boticon_zunda.png", filename="boticon_zunda.png")
             embed.set_thumbnail(url=f"attachment://boticon_zunda.png")
             embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)

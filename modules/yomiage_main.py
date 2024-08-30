@@ -55,7 +55,6 @@ fix_words = [
     ["\n", "、"] # 改行はすこし間をあける
 ]
 
-# (例: "あ", "example.mp3", *volume*, *返信メッセージなど*
 yomiage_serv_list = defaultdict(deque)
 ace_left = 0
 
@@ -155,7 +154,7 @@ async def yomiage(content, guild: Guild):
     dicts = get_dictionary(guild.id)
     if dicts != None:
         for text, reading, user in dicts:
-            fixed_content = fixed_content.replace(text.lower(), reading.lower())
+            fixed_content = re.sub(replace_reg, replace_word, fixed_content, flags=re.IGNORECASE)
 
     ##fix_wordに含まれたワードをfix_end_wordに変換する
     for word in fix_words:
@@ -229,7 +228,7 @@ async def queue_yomiage(content: str, guild: Guild, spkID: int, speed: float = 1
 
             voice_byte = core.synthesis(audio_query, spkID)
 
-        ###作成時間を記録するため、timeを利用する
+        ###作成時間を記録するため、timeを利用するm
         wav_time = time.time()
         voice_file = f"{VC_OUTPUT}{guild.id}-{wav_time}.wav"
 
