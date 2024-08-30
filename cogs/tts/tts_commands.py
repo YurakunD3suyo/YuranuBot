@@ -53,7 +53,7 @@ class yomiage_cmds(commands.Cog):
             )
             embed.add_field(
                 name="読み上げるチャンネル",
-                value=f"> {channel}"
+                value=f"> {channel}",
                 inline=False
             )
             embed.add_field(
