@@ -228,7 +228,7 @@ async def queue_yomiage(content: str, guild: Guild, spkID: int, speed: float = 1
 
             voice_byte = core.synthesis(audio_query, spkID)
 
-        ###作成時間を記録するため、timeを利用するm
+        ###作成時間を記録するため、timeを利用する
         wav_time = time.time()
         voice_file = f"{VC_OUTPUT}{guild.id}-{wav_time}.wav"
 
@@ -236,7 +236,7 @@ async def queue_yomiage(content: str, guild: Guild, spkID: int, speed: float = 1
             with open(voice_file, "wb") as f:
                 f.write(voice_byte)
         else:
-            ConnectionError()
+            raise SystemError("VOICEVOXでの音声生成に失敗しました。")
 
         with wave.open(voice_file,  'rb') as f:
             # 情報取得
