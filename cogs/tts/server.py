@@ -24,9 +24,11 @@ class Server( commands.Cog ):
 
                 if result is None:
                     spker_name = find_spker(id=id)
-                    await interact.response.send_message(f"サーバー話者を**{spker_name[0]}**に変更したのだ！")
-                    return
-                
+
+                    if spker_name is not None:
+                        await interact.response.send_message(f"サーバー話者を**{spker_name[0]}**に変更したのだ！")
+                        return
+                    
                 await interact.response.send_message("エラーが発生したのだ...")
             else:
                 await interact.response.send_message("このコマンドは管理者のみ実行できるのだ")
@@ -42,7 +44,7 @@ class Server( commands.Cog ):
     @app_commands.describe(speed="0.5~2.0")
     async def yomiage_speed(self, interact: Interaction, speed: float):
         try:
-            if speed >= 0.5 or speed <=2.0:
+            if speed >= 0.5 or speed <= 2.0:
                 read_type = "speak_speed"
                 result = save_server_setting(interact.guild.id, read_type, speed)
             else:
