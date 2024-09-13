@@ -1,5 +1,5 @@
 {
     "editor.fontSize": 16,
-    "python.analysis.autoImportCompletions": true,
-    "python.analysis.typeCheckingMode": "off"
+    "python.analysis.autoImportCompletions": false,
+    "python.analysis.typeCheckingMode": "basic"
 }
