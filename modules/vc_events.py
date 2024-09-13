@@ -2,7 +2,7 @@ from discord import Member, VoiceState, Client
 import random
 import re
 
-from modules.messages import conn_message, zunda_conn_message
+from modules.vc_messages import conn_message, zunda_conn_message
 from modules.yomiage_main import yomiage
 from modules.db_settings import get_server_setting, get_user_setting
 
