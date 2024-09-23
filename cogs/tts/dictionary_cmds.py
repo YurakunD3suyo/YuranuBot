@@ -43,7 +43,34 @@ class Dictionary(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
-    
+
+    @dict_cmd.command(name="delete", description="サーバー辞書の単語を削除するのだ")
+    @app_commands.rename(text="単語")
+    async def vc_dictionary(self, interact: Interaction, text: str):
+        try:
+            result = delete_dictionary(interact.guild.id, text)
+            if result is None:
+                embed = Embed(
+                    title="正常に削除したのだ！",
+                    description="サーバー辞書の単語を削除しました！",
+                    color=Color.green()
+                )
+                embed.add_field(
+                    name="削除した単語",
+                    value=text
+                )
+                embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+
+                await interact.response.send_message(embed=embed)
+                return
+            
+            await interact.response.send_message(f"設定に失敗したのだ...")
+
+        except Exception as e:
+            exception_type, exception_object, exception_traceback = sys.exc_info()
+            filename = exception_traceback.tb_frame.f_code.co_filename
+            line_no = exception_traceback.tb_lineno
+            await sendException(e, filename, line_no)
 
     @dict_cmd.command(name="list", description="サーバー辞書の単語を表示するのだ")
     async def vc_dictionary(self, interact: Interaction):
@@ -88,33 +115,35 @@ class Dictionary(commands.Cog):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
-    @dict_cmd.command(name="delete", description="サーバー辞書の単語を削除するのだ")
-    @app_commands.rename(text="単語")
-    async def vc_dictionary(self, interact: Interaction, text: str):
-        try:
-            result = delete_dictionary(interact.guild.id, text)
-            if result is None:
+    @dict_cmd.command(name="find", description="入力された単語から辞書内を検索します")
+    async def vc_dictionary_find(self, interact: Interaction, fword: str):
+        result = get_dictionary(interact.guild.id)
+
+        embed = Embed(
+            title="見つからなかったのだ...",
+            description="単語はありませんでした。新しく作ってみてもいいかも。"
+        )
+        
+        for word, kana, user in result:
+            if word == fword:
                 embed = Embed(
-                    title="正常に削除したのだ！",
-                    description="サーバー辞書の単語を削除しました！",
-                    color=Color.green()
+                    title="発見したのだ！",
+                    description="単語を発見しました。"
                 )
                 embed.add_field(
-                    name="削除した単語",
-                    value=text
+                    name="単語名",
+                    value=word
                 )
-                embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
-
-                await interact.response.send_message(embed=embed)
-                return
-            
-            await interact.response.send_message(f"設定に失敗したのだ...")
-
-        except Exception as e:
-            exception_type, exception_object, exception_traceback = sys.exc_info()
-            filename = exception_traceback.tb_frame.f_code.co_filename
-            line_no = exception_traceback.tb_lineno
-            await sendException(e, filename, line_no)
+                embed.add_field(
+                    name="読みカナ",
+                    value=kana
+                )
+                embed.add_field(
+                    name="登録ユーザー",
+                    value=user
+                )
+                
+        await interact.response.send_message(embed=embed)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Dictionary(bot))
