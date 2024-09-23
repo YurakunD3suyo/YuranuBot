@@ -116,6 +116,7 @@ class Dictionary(commands.Cog):
             await sendException(e, filename, line_no)
 
     @dict_cmd.command(name="find", description="入力された単語から辞書内を検索します")
+    @app_commands.rename(fword="単語")
     async def vc_dictionary_find(self, interact: Interaction, fword: str):
         result = get_dictionary(interact.guild.id)
     

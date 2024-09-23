@@ -211,7 +211,7 @@ class SoundTextCommands( commands.Cog ):
             await sendException(e, filename, line_no)
 
     @st.command(name="find", description="サウンドテキストを検索するのだ")
-    @app_commands.rename(word="単語")
+    @app_commands.rename(fword="単語")
     async def soundtext_find(self, interact: Interaction, fword: str):
         result = get_soundtext_list(interact.guild.id)
 
