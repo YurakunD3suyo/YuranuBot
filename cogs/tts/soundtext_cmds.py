@@ -232,7 +232,9 @@ class SoundTextCommands( commands.Cog ):
                     name="単語名",
                     value=word
                 )
-            await interact.response.send_message(embed=embed)
+                
+        await interact.response.send_message(embed=embed)
+        return
 
     @st.command(name="mode", description="サウンドテキスト機能を変更するのだ")
     @app_commands.rename(mode="モード")

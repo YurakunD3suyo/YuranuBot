@@ -144,8 +144,9 @@ class Dictionary(commands.Cog):
                     name="登録ユーザー",
                     value=f"<@{user}>"
                 )
-                
+
         await interact.response.send_message(embed=embed)
+        return
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Dictionary(bot))
