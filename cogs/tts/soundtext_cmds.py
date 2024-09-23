@@ -210,6 +210,30 @@ class SoundTextCommands( commands.Cog ):
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
 
+    @st.command(name="find", description="サウンドテキストを検索するのだ")
+    @app_commands.rename(word="単語")
+    async def soundtext_find(self, interact: Interaction, fword: str):
+        result = get_soundtext_list(interact.guild.id)
+
+        embed = Embed(
+            title="サウンドテキストがないのだ...",
+            description="サウンドテキストがありませんでした。追加してみてください。",
+            color=Color.orange()
+        )
+
+        for word, dir in result:
+            if word == fword:
+                embed = Embed(
+                    title="発見したのだ！",
+                    description="単語を発見しました。",
+                    color=Color.green()
+                )
+                embed.add_field(
+                    name="単語名",
+                    value=word
+                )
+            await interact.response.send_message(embed=embed)
+
     @st.command(name="mode", description="サウンドテキスト機能を変更するのだ")
     @app_commands.rename(mode="モード")
     @app_commands.choices(
@@ -223,7 +247,7 @@ class SoundTextCommands( commands.Cog ):
         try:
             result = save_server_setting(interact.guild_id, "soundtext_mode", mode)
             if result is None:
-                mode_str: str = None
+                mode_str: str = ""
 
                 if mode == 2:
                     mode_str = "有効"

@@ -118,17 +118,19 @@ class Dictionary(commands.Cog):
     @dict_cmd.command(name="find", description="入力された単語から辞書内を検索します")
     async def vc_dictionary_find(self, interact: Interaction, fword: str):
         result = get_dictionary(interact.guild.id)
-
+    
         embed = Embed(
             title="見つからなかったのだ...",
-            description="単語はありませんでした。新しく作ってみてもいいかも。"
+            description="単語はありませんでした。新しく作ってみてもいいかも。",
+            color=Color.orange()
         )
-        
+
         for word, kana, user in result:
             if word == fword:
                 embed = Embed(
                     title="発見したのだ！",
-                    description="単語を発見しました。"
+                    description="単語を発見しました。",
+                    color=Color.green()
                 )
                 embed.add_field(
                     name="単語名",
@@ -140,7 +142,7 @@ class Dictionary(commands.Cog):
                 )
                 embed.add_field(
                     name="登録ユーザー",
-                    value=user
+                    value=f"<@{user}>"
                 )
                 
         await interact.response.send_message(embed=embed)
