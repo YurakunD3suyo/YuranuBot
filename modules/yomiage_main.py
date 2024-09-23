@@ -14,7 +14,7 @@ os_name = platform.uname().system
 from discord import FFmpegPCMAudio, PCMVolumeTransformer, Message, Guild, VoiceClient, Embed, Colour
 import discord.utils as utils
 from modules.db_soundtext import get_soundtext_list
-from cogs.tts.soundtext_cmds import SOUNDTEXT_DIR
+from cogs.tts.cmds_soundtext import SOUNDTEXT_DIR
 from modules.db_settings import get_server_setting, get_user_setting
 from modules.exception import sendException
 from modules.db_vc_dictionary import get_dictionary
