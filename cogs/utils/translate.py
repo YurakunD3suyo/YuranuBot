@@ -14,7 +14,7 @@ class Translate( commands.Cog ):
         Choice(name="日本語", value="JA"),
         Choice(name="英語", value="EN"),
     ])
-    async def translate(self, interact: Interaction, sentence, target_lang: str):
+    async def translate(self, interact: Interaction, sentence: str, target_lang: str):
         auth = os.getenv("DEEPL_AUTH_KEY")
         translator = deepl.Translator(auth)
 
