@@ -2,7 +2,7 @@ import deepl
 import os
 
 from discord.ext import commands
-from discord import app_commands, Interaction, Embed, Color
+from discord import app_commands, Interaction, Embed, Color, File
 from discord.app_commands import Choice
 
 class Translate( commands.Cog ):
@@ -39,6 +39,8 @@ class Translate( commands.Cog ):
             value=result,
             inline=False
         )
+        embed.set_thumbnail(url=f"attachment://boticon_zunda.png")
+        embed.set_footer(text=f"DeepL Translate," icon_url="https://cdn.freelogovectors.net/wp-content/uploads/2022/01/deepl-logo-freelogovectors.net_.png")
 
         await interact.response.send_message(embed=embed)
 
