@@ -31,11 +31,13 @@ class Translate( commands.Cog ):
         )
         embed.add_field(
             name="翻訳前",
-            value=sentence
+            value=sentence,
+            inline=False
         )
         embed.add_field(
             name="翻訳後",
-            value=result
+            value=result,
+            inline=False
         )
 
         await interact.response.send_message(embed=embed)
