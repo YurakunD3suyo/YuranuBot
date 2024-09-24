@@ -10,7 +10,7 @@ class Translate( commands.Cog ):
         self.bot = bot
 
     @app_commands.command(name="translate", description="翻訳コマンドなのだ")
-    @app_commands.choices(lang=[
+    @app_commands.choices(target_lang=[
         Choice(name="日本語", value="JA"),
         Choice(name="英語", value="EN"),
     ])

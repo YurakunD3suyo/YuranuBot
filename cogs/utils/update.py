@@ -75,13 +75,13 @@ class Update(commands.Cog):
                 return
             
             embed = Embed(
-                title="更新中できたのだ！！",
+                title="更新できたのだ！",
                 description="アップデートが完了しました！再起動しています...",
                 color=Color.green()
             )
             embed.add_field(
                 name="アップデート状態",
-                value=f"`{output}`"
+                value=f"```{output}```"
             )
             await message.edit(embed=embed)
             await asyncio.sleep(2)
