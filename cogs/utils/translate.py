@@ -40,7 +40,7 @@ class Translate( commands.Cog ):
             inline=False
         )
         embed.set_thumbnail(url=f"attachment://boticon_zunda.png")
-        embed.set_footer(text=f"DeepL Translate," icon_url="https://cdn.freelogovectors.net/wp-content/uploads/2022/01/deepl-logo-freelogovectors.net_.png")
+        embed.set_footer(text=f"DeepL Translate", icon_url="https://cdn.freelogovectors.net/wp-content/uploads/2022/01/deepl-logo-freelogovectors.net_.png")
 
         await interact.response.send_message(embed=embed)
 
