@@ -11,8 +11,12 @@ class Translate( commands.Cog ):
 
     @app_commands.command(name="translate", description="翻訳コマンドなのだ")
     @app_commands.choices(target_lang=[
-        Choice(name="日本語", value="JA"),
-        Choice(name="英語", value="EN"),
+        Choice(name="英語(アメリカ)", value="EN-US"),
+        Choice(name="英語(イギリス)", value="EN-GB"),
+        Choice(name="中国語(簡体)", value="ZN-HANS"),
+        Choice(name="中国語(繁体)", value="ZN-HANT"),
+        Choice(name="韓国語", value="KO"),
+        Choice(name="日本語", value="JA")
     ])
     async def translate(self, interact: Interaction, sentence: str, target_lang: str):
         auth = os.getenv("DEEPL_AUTH_KEY")
