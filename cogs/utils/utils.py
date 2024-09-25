@@ -3,7 +3,7 @@ import sys
 
 from discord.ext import commands, tasks
 from discord import app_commands, Interaction, Message, Embed, Color
-from modules.pc_status import pc_status, PCStatus
+from modules.computer import pc_status, PCStatus
 from modules.db_settings import save_server_setting
 from modules.exception import sendException
 from modules.delete import delete_file_latency

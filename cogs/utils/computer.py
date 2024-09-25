@@ -5,7 +5,7 @@ import platform
 from discord import app_commands, Status, CustomActivity, Embed, Color, Interaction, __version__ as discord_version
 from discord.ext import commands, tasks
 
-from modules.pc_status import pc_status, PCStatus
+from modules.computer import pc_status, PCStatus
 
 
 class Computer( commands.Cog ):

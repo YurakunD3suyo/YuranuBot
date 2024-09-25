@@ -5,21 +5,21 @@ import psutil
 battery = psutil.sensors_battery()
 
 class PCStatus():
-    os_name: str = None
+    os_name: str = ""
 
-    cpu_name: str = None
-    cpu_load: float = None
-    cpu_freq: float = None
+    cpu_name: str = ""
+    cpu_load: float = 0
+    cpu_freq: float = 0
 
-    ram_use: float = None
-    ram_total: float = None
-    ram_percent: float = None
+    ram_use: float = 0
+    ram_total: float = 0
+    ram_percent: float = 0
 
-    gpu_name: str = None
-    gpu_load: float = None
-    gpu_mem_use: float = None
-    gpu_mem_total: float = 8.0 # GPUの最大メモリを取得できないため、自分で設定してある
-    gpu_mem_percent: float = None
+    gpu_name: str = ""
+    gpu_load: float = 0
+    gpu_mem_use: float = 0
+    gpu_mem_total: float = 12.0 # GPUの最大メモリを取得できないため、自分で設定してある
+    gpu_mem_percent: float = 0
 
 ##Windowsの場合の処理
 if platform.uname().system == "Windows":
