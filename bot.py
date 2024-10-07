@@ -13,7 +13,7 @@ from modules.db_settings import db_load, db_init
 from modules.db_vc_dictionary import dictionary_load
 from modules.db_soundtext import soundtext_load
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 # ディレクトリの取得
 ROOT_DIR = os.path.dirname(__file__)
