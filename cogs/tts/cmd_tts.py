@@ -151,28 +151,7 @@ class yomiage_cmds(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
-
-
-
-    @yomi.command(name="connect-message", description="読み上げ接続時の読み上げ内容を変更するのだ")
-    @app_commands.rename(text="文章")
-    async def change_vc_exit_message(self, interact: Interaction, text: str):
-        try:
-            read_type = "vc_connect_message"
-            res = save_server_setting(interact.guild.id, read_type, text)
-            if res is None:
-                await interact.response.send_message("**読み上げ接続時の読み上げ内容を変更したのだ！**")
-                return
             
-            await interact.response.send_message("設定に失敗したのだ...")  
-            logging.warning(res)  
-
-        except Exception as e:
-            exception_type, exception_object, exception_traceback = sys.exc_info()
-            filename = exception_traceback.tb_frame.f_code.co_filename
-            line_no = exception_traceback.tb_lineno
-            await sendException(e, filename, line_no)
-
 
     @yomi.command(name="auto-channel", description="設定したVCに自動接続するのだ(現在入っているVCが対象なのだ)")
     @app_commands.rename(bool="有効無効")
