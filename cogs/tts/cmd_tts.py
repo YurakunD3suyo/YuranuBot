@@ -151,7 +151,9 @@ class yomiage_cmds(commands.Cog):
             filename = exception_traceback.tb_frame.f_code.co_filename
             line_no = exception_traceback.tb_lineno
             await sendException(e, filename, line_no)
-            
+
+    # 実はここに、実在しない設定が残っていました
+    # thank you very much MGNT
 
     @yomi.command(name="auto-channel", description="設定したVCに自動接続するのだ(現在入っているVCが対象なのだ)")
     @app_commands.rename(bool="有効無効")
