@@ -41,7 +41,7 @@ class SoundTextCommands( commands.Cog ):
 
     @st.command(name="add", description="サウンドテキストを追加するのだ")
     @app_commands.rename(file="流す音声ファイル")
-    @app_commands.describe(file="mp3とwavのみに対応なのだ")
+    @app_commands.describe(file="音声ファイルのみ使用可能なのだ")
     async def soundtext_add(self, interact: Interaction, word: str, file: Attachment):
 
         # 同じ単語が存在しないか確認
