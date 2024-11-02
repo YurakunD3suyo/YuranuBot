@@ -134,7 +134,7 @@ async def yomiage(content, guild: Guild):
                 fixed_content = fixed_content.replace(f'<@{mention.id}>', "@"+mention.display_name)
 
             ## チャンネルIDをチャンネル名に置き換える
-            channel_mentions = re.findall(r'<#([0-9]+)>', fixed_content)
+            channel_mentions = re.findall(r'<#([0-9]+)>', fixed_content, re.DOTALL)
             for channel_id in channel_mentions:
                 channel = utils.get(content.guild.channels, id=int(channel_id))
                 if channel:

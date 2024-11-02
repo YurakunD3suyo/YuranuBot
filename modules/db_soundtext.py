@@ -38,10 +38,8 @@ def soundtext_load(file):
     try:
         global cursor, conn
 
-        conn = sqlite3.connect(file)
+        conn = sqlite3.connect(file, isolation_level=None)
         cursor = conn.cursor()
-        
-        conn.autocommit = True
 
         return True
     
