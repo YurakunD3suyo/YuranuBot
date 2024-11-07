@@ -45,7 +45,7 @@ def load_from_voicevox_app():
                         #リストに追加
                         spk_list.append([name, spk_id])
         
-        logging.debug(f"vc_speakers -> 読み込み完了: {len(spk_list)}人の話者が登録済")
+        logging.info(f"vc_speakers -> 読み込み完了: {len(spk_list)}人の話者が登録済")
     except:
         logging.exception("vc_speakers -> VOICEVOXアプリから話者の読み込みに失敗")
 

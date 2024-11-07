@@ -81,7 +81,7 @@ class Discord_URL_Loader( commands.Cog ):
                             #Embedでいろいーろ
                             embed=Embed(
                                 #メッセージの送信者
-                                title=f"Message from {tar_message.author.name}",
+                                title=f"{tar_message.author.name} のメッセージ",
                                 #メッセージの内容
                                 description=f"{tar_message.content}",
 

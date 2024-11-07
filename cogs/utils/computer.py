@@ -19,7 +19,7 @@ class Computer( commands.Cog ):
         @tasks.loop(seconds=10)
         async def rpc_loop(self):
 
-            pc = PCStatus
+            pc = PCStatus()
             activity_message = None
             status = None
 
@@ -58,7 +58,6 @@ class Computer( commands.Cog ):
             
             elif self.rpc_mode == 4:
                 activity_message = "More at bot.yuranu.net"
-                status = Status.online
 
                 self.rpc_mode = 0
             

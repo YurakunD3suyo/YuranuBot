@@ -6,6 +6,16 @@ from modules.exception import sendException
 from modules.db_vc_dictionary import delete_dictionary, save_dictionary, get_dictionary
 from modules import pages as Page
 
+def make_new_embed(bot):
+    embed = Embed(
+        title="サーバー辞書の単語を表示するのだ！",
+        description="サーバー辞書の単語を表示するのだ！",
+        color=Color.green()
+    )
+    embed.set_footer(text=f"{bot.user.display_name} | Made by yurq.", icon_url=bot.user.avatar.url)
+
+    return embed
+
 class Dictionary(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -78,12 +88,7 @@ class Dictionary(commands.Cog):
             result = get_dictionary(interact.guild.id)
             if result:
                 embeds = []
-                embed = Embed(
-                    title="サーバー辞書の単語を表示するのだ！",
-                    description="サーバー辞書の単語を表示しています！",
-                    color=Color.green()
-                )
-                embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+                embed = make_new_embed(self.bot)
 
                 for i in range(len(result)):
                     embed.add_field(
@@ -93,12 +98,7 @@ class Dictionary(commands.Cog):
 
                     if (i+1) % 10 == 0:  # Create a new embed every 10 words
                         embeds.append(embed)
-                        embed = Embed(
-                            title="サーバー辞書の単語を表示するのだ！",
-                            description="サーバー辞書の単語を表示するのだ！",
-                            color=Color.green()
-                        )
-                        embed.set_footer(text=f"{self.bot.user.display_name} | Made by yurq.", icon_url=self.bot.user.avatar.url)
+                        embed = make_new_embed(self.bot)
 
                 if len(embed.fields) > 0:  # Add the last embed if there are remaining fields
                     embeds.append(embed)

@@ -23,7 +23,6 @@ class Update(commands.Cog):
         appinfo = await self.bot.application_info()
         
         # botの管理者を取得
-        owners = []
         if appinfo.team:
             owners = [member.id for member in appinfo.team.members]
         else:

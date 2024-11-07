@@ -29,7 +29,7 @@ USE_VOICEVOX_APP = os.getenv("USE_VOICEVOX_APP")
 if USE_VOICEVOX_APP == "True":
     print("VOICEVOXアプリを使用します")
 else:
-    print("voicevox coreを利用します")
+    print("voicevox_coreを利用します")
     from voicevox_core import AccelerationMode, AudioQuery, VoicevoxCore
 
     ###読み上げ用のコアをロードし、作成します
