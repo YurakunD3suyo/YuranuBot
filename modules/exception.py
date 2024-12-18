@@ -24,4 +24,5 @@ async def sendException(e, filename, line_no):
 
     # Prometheusかんれん
     ## エラーを加算
-    client.metrics.increment("tts_errors")
+    if bot.prometheus:
+        client.metrics.increment("tts_errors")

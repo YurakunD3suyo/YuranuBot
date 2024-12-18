@@ -328,8 +328,8 @@ def send_voice(queue, voice_client: VoiceClient):
 
     ## Prometheus
     ## 総回数に追加
-    
-    bot.metrics.increment("tts_total_times")
+    if bot.prometheus:
+        bot.metrics.increment("tts_total_times") 
 
     if latency != -1:
         ## 再生スタートが完了したら時間差でファイルを削除する。
@@ -337,5 +337,6 @@ def send_voice(queue, voice_client: VoiceClient):
 
         ## Prometheus
         ## 総生成時間に加算する
-        bot.metrics.increment("tts_total_length", latency)
+        if bot.prometheus:
+            bot.metrics.increment("tts_total_length", latency)
 

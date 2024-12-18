@@ -10,13 +10,13 @@ class Prometheus( commands.Cog ):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @tasks.loop(seconds=30)
-    async def loops(self):
-        guild_count = len(self.bot.guilds)
-        user_count = sum(len(guild.members) for guild in self.bot.guilds)
-        
-        self.bot.metrics.set("tts_guilds", guild_count)
-        self.bot.metrics.set("tts_users", user_count)
+    if self.bot.prometheus:   
+        @tasks.loop(seconds=30)
+        async def loops(self):
+            guild_count = len(self.bot.guilds)
+            user_count = sum(len(guild.members) for guild in self.bot.guilds)
+            self.bot.metrics.set("tts_guilds", guild_count)
+            self.bot.metrics.set("tts_users", user_count)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Prometheus(bot))
