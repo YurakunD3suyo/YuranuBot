@@ -141,7 +141,7 @@ async def on_ready():
     except:
         logging.exception(f'main -> APIサーバーの起動に失敗')
 
-    if PROMETHEUS == "True":
+    if PROMETHEUS:
         try:
             # Prometheus Clientを起動
             prometheus.start(5001)
