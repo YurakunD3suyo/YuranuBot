@@ -10,7 +10,7 @@ class Prometheus( commands.Cog ):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-        if os.getenv("PROMETHEUS"):
+        if os.getenv("PROMETHEUS") == "True":
             @tasks.loop(seconds=30)
             async def loops(self):
                 guild_count = len(self.bot.guilds)
