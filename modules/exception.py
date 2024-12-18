@@ -1,6 +1,8 @@
 from discord.ext.commands import Bot
 from discord import Color, Embed
 
+from modules import prometheus
+
 client: Bot
 
 def exception_init(cli):
@@ -19,3 +21,7 @@ async def sendException(e, filename, line_no):
                     f"{filename}({line_no}行) -> [{type(e)}] {e}")
     
     await channel_myserv.send(embed=embed)
+
+    # Prometheusかんれん
+    ## エラーを加算
+    client.metrics.increment("tts_errors")

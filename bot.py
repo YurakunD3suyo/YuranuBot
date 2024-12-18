@@ -12,6 +12,7 @@ from modules.exception import exception_init
 from modules.db_settings import db_load, db_init
 from modules.db_vc_dictionary import dictionary_load
 from modules.db_soundtext import soundtext_load
+from modules import prometheus
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,6 +24,7 @@ load_dotenv()
 TOKEN = os.getenv("TOKEN")
 DIC_DIR = os.getenv("DIC_DIR")
 PREFIX = os.getenv("PREFIX")
+PROMETHEUS = os.getenv("PROMETHEUS")
 
 ###データベースの読み込み
 
@@ -38,7 +40,7 @@ else:
 dic_res = dictionary_load(dict_dir)
 
 if dic_res==False:
-    logging.exception("Datbase -> dictionaryの読み込みに失敗しました")
+    logging.exception("Database -> dictionaryの読み込みに失敗しました")
     sys.exit()
 else:
     logging.info("Database -> dictionaryを読み込みました。")
@@ -78,6 +80,14 @@ else:
 
 #スタート時間を作成
 bot.start_time = time.time()
+bot.metrics = prometheus.MetricsGenerator()
+
+#Prometheus監視用のやつ
+bot.metrics.create_gauge("tts_total_times", "The number of times the TTS processed")
+bot.metrics.create_gauge("tts_total_length", "The total length of speak")
+bot.metrics.create_gauge("tts_errors", "Total of errors in TTS Bot")
+bot.metrics.create_gauge("tts_guilds", "Total of guilds TTS bot installed")
+bot.metrics.create_gauge("tts_users", "Total of users in guilds")
 
 ##sendExceptionが利用できるようにする
 exception_init(bot)
@@ -124,9 +134,17 @@ async def on_ready():
     try:
         # APIを起動
         subprocess.Popen(R"python modules\api.py", shell=True)
-        logging.info(f'api -> APIサーバーを起動')
+        logging.info(f'main -> APIサーバーを起動')
     except:
-        logging.exception(f'api -> APIサーバーの起動に失敗')
+        logging.exception(f'main -> APIサーバーの起動に失敗')
+
+    if PROMETHEUS == "True":
+        try:
+            # Prometheus Clientを起動
+            prometheus.start(5001)
+            logging.info(f'main -> Prometheus Clientを起動')
+        except:
+            logging.exception(f'main -> Prometheus Clientの起動に失敗')
 
 # クライアントの実行
 if type(TOKEN)==str:

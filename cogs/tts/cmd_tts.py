@@ -5,6 +5,8 @@ from discord.app_commands import Choice
 import sys
 import logging
 import random
+import modules.yomiage_main as yomiage_main
+
 from modules.vc_speakers import spk_choices, user_spk_choices, find_spker
 
 from modules.vc_messages import conn_message, zunda_conn_message
@@ -18,6 +20,8 @@ from modules import pages as Page
 class yomiage_cmds(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        #yomiage_mainにbotを設定
+        yomiage_main.bot = bot
     
     yomi = app_commands.Group(name="yomiage", description="読み上げ関連のコマンドを実行するのだ")
         

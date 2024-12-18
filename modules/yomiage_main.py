@@ -12,6 +12,7 @@ import os
 os_name = platform.uname().system
 
 from discord import FFmpegPCMAudio, PCMVolumeTransformer, Message, Guild, VoiceClient, Embed, Colour
+from discord.ext.commands import Bot
 import discord.utils as utils
 from modules.db_soundtext import get_soundtext_list
 from cogs.tts.cmds_soundtext import SOUNDTEXT_DIR
@@ -19,9 +20,11 @@ from modules.db_settings import get_server_setting, get_user_setting
 from modules.exception import sendException
 from modules.db_vc_dictionary import get_dictionary
 from modules.delete import delete_file_latency
+from modules import prometheus
 from dotenv import load_dotenv
 from collections import deque, defaultdict
 
+bot: Bot
 
 load_dotenv()
 USE_VOICEVOX_APP = os.getenv("USE_VOICEVOX_APP")
@@ -323,7 +326,15 @@ def send_voice(queue, voice_client: VoiceClient):
 
     voice_client.play(pcmaudio_fixed, after=lambda e:send_voice(queue, voice_client))
 
+    ## Prometheus
+    ## 総回数に追加
+    bot.metrics.increment("tts_total_times")
+
     if latency != -1:
         ## 再生スタートが完了したら時間差でファイルを削除する。
         delete_file_latency(directory, latency)
+
+        ## Prometheus
+        ## 総生成時間に加算する
+        bot.metrics.increment("tts_total_length", latency)
 
