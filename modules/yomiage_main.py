@@ -328,6 +328,7 @@ def send_voice(queue, voice_client: VoiceClient):
 
     ## Prometheus
     ## 総回数に追加
+    
     bot.metrics.increment("tts_total_times")
 
     if latency != -1:

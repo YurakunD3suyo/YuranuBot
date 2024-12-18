@@ -24,7 +24,7 @@ load_dotenv()
 TOKEN = os.getenv("TOKEN")
 DIC_DIR = os.getenv("DIC_DIR")
 PREFIX = os.getenv("PREFIX")
-PROMETHEUS = os.getenv("PROMETHEUS")
+PROMETHEUS = True if os.getenv("PROMETHEUS") == "True" else False
 
 ###データベースの読み込み
 
@@ -83,11 +83,14 @@ bot.start_time = time.time()
 bot.metrics = prometheus.MetricsGenerator()
 
 #Prometheus監視用のやつ
+bot.prometheus = PROMETHEUS
+
 bot.metrics.create_gauge("tts_total_times", "The number of times the TTS processed")
 bot.metrics.create_gauge("tts_total_length", "The total length of speak")
 bot.metrics.create_gauge("tts_errors", "Total of errors in TTS Bot")
 bot.metrics.create_gauge("tts_guilds", "Total of guilds TTS bot installed")
 bot.metrics.create_gauge("tts_users", "Total of users in guilds")
+
 
 ##sendExceptionが利用できるようにする
 exception_init(bot)
